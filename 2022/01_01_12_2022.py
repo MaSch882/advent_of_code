@@ -52,10 +52,10 @@ def sum_three_highest_calories(list_of_sorted_integers: list[int]) -> int:
 
 def main():
     max_calories = calculate_maximum_calories_in_list("input_data//1_01_12_problem_1_problem_data.txt")
-    print(max_calories)
+    print(f'The elf with the maximum amount of calories carries {max_calories} calories.')
 
     max_three_calories = calculate_sum_of_three_highest_calories("input_data/1_01_12_problem_1_problem_data.txt")
-    print(max_three_calories)
+    print(f'The three elves carrying the most calories carry {max_three_calories} in total.')
 
 
 if __name__ == '__main__':
