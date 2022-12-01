@@ -1,28 +1,19 @@
+import Utils.input_processing as ip
+
+
 def calculate_maximum_calories_in_list(filename: str) -> int:
-    list_of_strings = read_input_list(filename)
-    trimmed_list_of_strings = trim_newlines(list_of_strings)
+    list_of_strings = ip.read_input_list(filename)
+    trimmed_list_of_strings = ip.trim_newlines(list_of_strings)
     list_of_summed_blocks = sum_blocks(trimmed_list_of_strings)
     return calculate_maximum(list_of_summed_blocks)
 
 
 def calculate_sum_of_three_highest_calories(filename: str) -> int:
-    list_of_strings = read_input_list(filename)
-    trimmed_list_of_strings = trim_newlines(list_of_strings)
+    list_of_strings = ip.read_input_list(filename)
+    trimmed_list_of_strings = ip.trim_newlines(list_of_strings)
     list_of_summed_blocks = sum_blocks(trimmed_list_of_strings)
     sort_list_of_integers(list_of_summed_blocks)
     return sum_three_highest_calories(list_of_summed_blocks)
-
-
-def read_input_list(filename: str) -> list[str]:
-    result = []
-    with open(filename) as file:
-        for line in file:
-            result.append(line)
-    return result
-
-
-def trim_newlines(list_of_strings: list[str]) -> list[str]:
-    return [string.strip() for string in list_of_strings]
 
 
 def sum_blocks(list_of_strings: list[str]) -> list[int]:
