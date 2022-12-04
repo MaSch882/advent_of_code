@@ -120,12 +120,16 @@ def calculate_sum_of_priorities_of_all_badges_from_input_data(filename: str) -> 
 
 
 def main():
+    print("Solutions to problem 3: [https://adventofcode.com/2022/day/3]")
+
     sum_of_priorities = calculate_priorities_of_all_duplicated_characters_of_given_input(
-        "input_data/3_03_12_problem_1_problem_data.txt")
+        "../input_data/03_12_problem_data.txt")
     print(f'The sum of the priorities of the duplicated items is {sum_of_priorities}.')
     sum_of_priorities_of_badges = calculate_sum_of_priorities_of_all_badges_from_input_data(
-        "input_data/3_03_12_problem_1_problem_data.txt")
+        "../input_data/03_12_problem_data.txt")
     print(f'The sum of the priorities of all badges is {sum_of_priorities_of_badges}.')
+
+    print("")
 
 
 if __name__ == "__main__":

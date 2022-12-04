@@ -155,13 +155,16 @@ def calculate_points_for_given_input_data_according_strategy(filename: str) -> i
 
 
 def main():
-    total_points = calculate_points_for_given_input_data('input_data/2_02_12_problem_1_problem_data.txt')
+    print("Solutions to problem 2: [https://adventofcode.com/2022/day/2]")
+
+    total_points = calculate_points_for_given_input_data('../input_data/02_12_problem_data.txt')
     print(f'If we follow the given strategy guide we will score {total_points} points.')
 
     total_points_strategy = calculate_points_for_given_input_data_according_strategy(
-        'input_data/2_02_12_problem_1_problem_data.txt')
+        '../input_data/02_12_problem_data.txt')
     print(f'If we follow the top secret strategy guide we will score {total_points_strategy} points.')
-    pass
+
+    print("")
 
 
 if __name__ == '__main__':
