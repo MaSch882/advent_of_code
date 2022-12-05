@@ -2,6 +2,7 @@ import solution_01_12_2022 as sol_01
 import solution_02_12_2022 as sol_02
 import solution_03_12_2022 as sol_03
 import solution_04_12_2022 as sol_04
+import solution_05_12_2022 as sol_05
 
 
 def main():
@@ -9,6 +10,7 @@ def main():
     sol_02.main()
     sol_03.main()
     sol_04.main()
+    sol_05.main()
 
 
 if __name__ == "__main__":
