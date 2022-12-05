@@ -111,6 +111,8 @@ def main():
     pairs_of_jobs_overlapping = count_pairs_of_jobs_overlapping_from_input_data("../input_data/04_12_problem_data.txt")
     print(f'The number of jobs where the jobs are overlapping is {pairs_of_jobs_overlapping}.')
 
+    print("")
+
 
 if __name__ == "__main__":
     main()
