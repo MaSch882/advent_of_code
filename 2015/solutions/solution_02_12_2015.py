@@ -42,14 +42,14 @@ class Present:
 
 
 def calculate_total_wrapping_area_for_all_presents() -> int:
-    list_of_all_measures = ip.read_input_list("input_data/02_12_problem_data.txt")
+    list_of_all_measures = ip.read_input_list("../input_data/02_12_problem_data.txt")
     trimmed_list = ip.trim_newlines(list_of_all_measures)
     presents = unzip_measures_to_presents(trimmed_list)
     return calculate_total_wrapping_area(presents)
 
 
 def calculate_total_ribbon_length_for_all_presents() -> int:
-    list_of_all_measures = ip.read_input_list("input_data/02_12_problem_data.txt")
+    list_of_all_measures = ip.read_input_list("../input_data/02_12_problem_data.txt")
     trimmed_list = ip.trim_newlines(list_of_all_measures)
     presents = unzip_measures_to_presents(trimmed_list)
     return calculate_total_ribbon_length(presents)

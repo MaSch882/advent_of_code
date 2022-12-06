@@ -27,7 +27,7 @@ def calculate_first_basement_floor(instruction: str):
 
 
 def main():
-    instruction = read_instruction("input_data/01_12_problem_data.txt")
+    instruction = read_instruction("../input_data/01_12_problem_data.txt")
     floor_at_the_end = calculate_floor(instruction)
     first_basement_floor = calculate_first_basement_floor(instruction)
     print(f'At the end of the instruction, Santa stands in floor {floor_at_the_end}.')

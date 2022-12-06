@@ -30,6 +30,8 @@ def is_start_of_packet(input_characters: list[str]) -> bool:
 
 
 def main():
+    print("Solutions to problem 6: [https://adventofcode.com/2022/day/6]")
+
     input_stream = read_input("../input_data/06_12_problem_data.txt")
 
     START_OF_PACKET = 4
@@ -43,7 +45,7 @@ def main():
     index_of_first_start_of_message = find_number_of_processed_characters_before_first_event(input_stream, MESSAGE)
     print(f'There are {index_of_first_start_of_message} characters processed before the first message is found.')
 
-    pass
+    print("")
 
 
 if __name__ == "__main__":
