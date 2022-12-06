@@ -7,13 +7,13 @@ def read_input(filename: str) -> str:
     return list_of_strings[0]
 
 
-# Problem 1
+# Problem 1 and 2
 
 
-def find_number_of_processed_characters_before_first_event(input_stream: str, number_of_characters: int) -> int:
-    current_characters = [input_stream[i] for i in range(0, number_of_characters)]
-    input_stream = input_stream[number_of_characters:]
-    current_marker_position = number_of_characters
+def find_number_of_processed_characters_before_first_event(input_stream: str, event: int) -> int:
+    current_characters = [input_stream[i] for i in range(0, event)]
+    input_stream = input_stream[event:]
+    current_marker_position = event
     for character in input_stream:
         if is_start_of_packet(current_characters):
             return current_marker_position
