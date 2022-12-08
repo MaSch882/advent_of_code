@@ -77,7 +77,7 @@ def is_visible_from_down(x_coordinate, y_coordinate, tree_matrix, tree_height):
     return True
 
 
-def count_visible_tree(tree_matrix: list[list[int]]) -> int:
+def count_visible_trees(tree_matrix: list[list[int]]) -> int:
     number_of_visible_trees = 0
 
     number_of_rows = len(tree_matrix)
@@ -90,6 +90,96 @@ def count_visible_tree(tree_matrix: list[list[int]]) -> int:
     return number_of_visible_trees
 
 
+# Problem 2
+
+
+def calculate_scenic_score_for_one_tree(x_coordinate: int, y_coordinate: int, tree_matrix: list[list[int]]) -> int:
+    number_of_columns = len(tree_matrix)
+    number_of_rows = len(tree_matrix[0])
+    tree_height = tree_matrix[x_coordinate][y_coordinate]
+
+    if is_edge_tree(x_coordinate, y_coordinate, number_of_rows, number_of_columns):
+        return 0
+
+    scenic_score = 1
+    scenic_score *= calculate_scenic_score_up(x_coordinate, y_coordinate, tree_matrix, tree_height)
+    scenic_score *= calculate_scenic_score_down(x_coordinate, y_coordinate, tree_matrix, tree_height)
+    scenic_score *= calculate_scenic_score_right(x_coordinate, y_coordinate, tree_matrix, tree_height)
+    scenic_score *= calculate_scenic_score_left(x_coordinate, y_coordinate, tree_matrix, tree_height)
+
+    return scenic_score
+
+
+def calculate_scenic_score_up(x_coordinate: int, y_coordinate: int, tree_matrix: list[list[int]],
+                              tree_height: int) -> int:
+    scenic_score = 0
+    for i in invert_range(0, x_coordinate):
+        compare_height = tree_matrix[i][y_coordinate]
+        if compare_height >= tree_height:
+            scenic_score += 1
+            break
+        scenic_score += 1
+    return scenic_score
+
+
+def calculate_scenic_score_down(x_coordinate: int, y_coordinate: int, tree_matrix: list[list[int]],
+                                tree_height: int) -> int:
+    scenic_score = 0
+    for i in range(x_coordinate + 1, len(tree_matrix)):
+        compare_height = tree_matrix[i][y_coordinate]
+        if compare_height >= tree_height:
+            scenic_score += 1
+            break
+        scenic_score += 1
+    return scenic_score
+
+
+def calculate_scenic_score_left(x_coordinate: int, y_coordinate: int, tree_matrix: list[list[int]],
+                                tree_height: int) -> int:
+    scenic_score = 0
+    for i in invert_range(0, y_coordinate):
+        compare_height = tree_matrix[x_coordinate][i]
+        if compare_height >= tree_height:
+            scenic_score += 1
+            break
+        scenic_score += 1
+    return scenic_score
+
+
+def calculate_scenic_score_right(x_coordinate: int, y_coordinate: int, tree_matrix: list[list[int]],
+                                 tree_height: int) -> int:
+    scenic_score = 0
+    for i in range(y_coordinate + 1, len(tree_matrix[0])):
+        compare_height = tree_matrix[x_coordinate][i]
+        if compare_height >= tree_height:
+            scenic_score += 1
+            break
+        scenic_score += 1
+    return scenic_score
+
+
+def invert_range(x: int, y: int) -> list[int]:
+    result = list(range(x, y))
+    result.reverse()
+    return result
+
+
+def calculate_scenic_score_for_all_trees(tree_matrix: list[list[int]]) -> list[int]:
+    scenic_scores = []
+
+    number_of_rows = len(tree_matrix)
+    number_of_columns = len(tree_matrix[0])
+
+    for i in range(0, number_of_rows):
+        for j in range(0, number_of_columns):
+            scenic_scores.append(calculate_scenic_score_for_one_tree(i, j, tree_matrix))
+    return scenic_scores
+
+
+def calculate_max_scenic_score(scenic_score: list[int]) -> int:
+    return max(scenic_score)
+
+
 def main():
     print("Solutions to problem 8: [https://adventofcode.com/2022/day/8]")
 
@@ -98,8 +188,12 @@ def main():
 
     tree_input = read_input(filename_problem)
     tree_matrix = convert_list_of_strings_in_matrix(tree_input)
-    number_of_visible_trees = count_visible_tree(tree_matrix)
-    print(f'The number of given trees in the forestation is {number_of_visible_trees}.')
+    number_of_visible_trees = count_visible_trees(tree_matrix)
+    print(f'The number of visible trees in the forestation is {number_of_visible_trees}.')
+
+    scenic_scores_for_all_trees = calculate_scenic_score_for_all_trees(tree_matrix)
+    max_scenic_score = calculate_max_scenic_score(scenic_scores_for_all_trees)
+    print(f'The maximum scenic score in the forestation is {max_scenic_score}.')
 
     print("")
 
