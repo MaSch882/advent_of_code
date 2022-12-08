@@ -1,6 +1,4 @@
-from dataclasses import dataclass
-
-from anytree import Node, RenderTree
+from treelib import Node, Tree
 
 from Utils import input_processing as ip
 
@@ -53,49 +51,92 @@ def split_each_string_of_list_at_empty_string(list_of_strings: list[str]) -> lis
     return list_of_splitted_strings
 
 
-# Data model
-
-
-@dataclass()
-class Directory:
-    type: str
-    name: str
-
-
-@dataclass()
-class File(Directory):
-    size: int
-
-
 # Problem 1
 
 
-def build_directory_tree(commands: list[str]) -> RenderTree:
-    parent = Node(Directory(DIRECTORY, "/"))
-    dir_tree = RenderTree(parent)
-    current_node = parent
+def build_directory_tree(commands: list[list[str]]) -> Tree:
+    tree = Tree()
+    tree.create_node(identifier="dir: /", tag="dir: /")  # parent
+    current_node = tree.get_node("/")
 
     for command in commands:
-        update_tree(command, current_node)
+        tree, current_node = update_tree(command, tree, current_node)
 
-    return dir_tree
-
-
-def update_tree(command, current_node: Node) -> None:
-    if command == "Test":
-        new_node = Node(File(FILE, "Test", 42), parent=current_node)
+    return tree
 
 
-def show_tree(tree: RenderTree):
-    for pre, fill, node in tree:
-        print("%s%s" % (pre, node.name))
+def update_tree(command: list[str], tree: Tree, current_node: Node) -> (Tree, Node):
+    if command[0] == "cd":
+        tree, current_node = process_command_cd(command, tree, current_node)
+    if command[0] == 'ls':
+        tree = process_command_ls(command, tree, current_node)
+    return tree, current_node
+
+
+def process_command_cd(command: list[str], tree: Tree, current_node: Node) -> (Tree, Node):
+    # command[1] enthaelt den String des Directories, zu dem wir springen wollen.
+    dir_to_jump_to = "dir: " + command[1]
+    # Wenn command[1] == ".." ist, springen wir zum Vorgaengerdirectory.
+    if dir_to_jump_to == "dir: ..":
+        try:
+            current_node = tree.parent(current_node.identifier)
+        except AttributeError:
+            return tree, current_node
+    # Wenn command[1] als Directory noch nicht vorhanden ist, legen wir es an und springen rein.
+    elif not tree.contains(dir_to_jump_to):
+        tree.create_node(identifier=dir_to_jump_to, parent=current_node)
+        current_node = tree.get_node(dir_to_jump_to)
+    # Andernfalls existiert das Directory bereits und wir koennen direkt hinspringen.
+    else:
+        current_node = tree.get_node(dir_to_jump_to)
+    return tree, current_node
+
+
+def process_command_ls(command: list[str], tree: Tree, current_node: Node) -> (Tree, Node):
+    command.remove("ls")
+    terminal_output = command
+
+    while len(terminal_output) > 0:
+        last_output = terminal_output.pop()
+        second_last_output = terminal_output.pop()
+        structure = [second_last_output, last_output]
+        tree = add_structure_to_tree(structure, tree, current_node)
+
+    return tree
+
+
+def add_structure_to_tree(structure: list[str], tree: Tree, current_node: Node) -> (Tree, Node):
+    if structure[0] == "dir":
+        tree = add_directory_to_tree(structure, tree, current_node)
+    else:
+        tree = add_file_to_tree(structure, tree, current_node)
+    return tree
+
+
+def add_directory_to_tree(structure: list[str], tree: Tree, current_node: Node) -> Tree:
+    node_string = "dir: " + structure[1]
+    if not tree.contains(node_string):
+        tree.create_node(identifier=node_string, parent=current_node)
+    return tree
+
+
+def add_file_to_tree(structure: list[str], tree: Tree, current_node: Node) -> Tree:
+    node_string = "file: " + structure[1] + "; " + structure[0]
+    if not tree.contains(node_string):
+        tree.create_node(identifier=node_string, parent=current_node)
+    return tree
 
 
 def main():
     print("Solutions to problem 7: [https://adventofcode.com/2022/day/7]")
 
     filename_test = "../input_data/07_12_2022_test_data.txt"
-    print(preprocess_input(filename_test))
+    filename_problem = "../input_data/07_12_2022_problem_data.txt"
+
+    processed_input = preprocess_input(filename_problem)
+
+    directory_tree = build_directory_tree(processed_input)
+    directory_tree.show()
 
     print("")
 
