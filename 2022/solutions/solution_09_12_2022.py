@@ -42,35 +42,105 @@ class Rope:
         if "R" in instruction:
             for char in instruction:
                 self.step_right()
+        if "L" in instruction:
+            for char in instruction:
+                self.step_left()
+        if "U" in instruction:
+            for char in instruction:
+                self.step_up()
+        if "D" in instruction:
+            for char in instruction:
+                self.step_down()
 
     # step-Logik
 
     def step_right(self) -> None:
         head_x = self.head[X]
         head_y = self.head[Y]
-        tail_x = self.tail[X]
-        tail_y = self.tail[Y]
-        if self.is_tail_on_head():
-            new_head_x = head_x + 1
-            self.head = (new_head_x, head_y)
-        if self.is_tail_left_from_head():
-            new_head_x = head_x + 1
-            new_tail_x = tail_x + 1
-            self.head = (new_head_x, head_y)
-            self.tail = (new_tail_x, tail_y)
 
-        # TODO: Faelle implementieren.
+        new_head_x = head_x + 1
+
+        if self.is_tail_on_head() or self.is_tail_right_from_head() or \
+                self.is_tail_below_from_head() or self.is_tail_above_from_head() or \
+                self.is_tail_right_below_from_head() or self.is_tail_right_above_from_head():
+            self.update_head(new_head_x, head_y)
+        elif self.is_tail_left_from_head():
+            self.update(new_head_x, head_y, head_x, head_y)
+        elif self.is_tail_left_above_from_head():
+            self.update(new_head_x, head_y, head_x, head_y)
+        elif self.is_tail_left_below_from_head():
+            self.update(new_head_x, head_y, head_x, head_y)
 
         self.update_visited_positions(self.tail)
 
     def step_left(self):
-        pass
+        head_x = self.head[X]
+        head_y = self.head[Y]
+
+        new_head_x = head_x - 1
+
+        if self.is_tail_on_head() or self.is_tail_left_from_head() or \
+                self.is_tail_below_from_head() or self.is_tail_above_from_head() or \
+                self.is_tail_left_above_from_head() or self.is_tail_left_below_from_head():
+            self.update_head(new_head_x, head_y)
+        elif self.is_tail_right_from_head():
+            self.update(new_head_x, head_y, head_x, head_y)
+        elif self.is_tail_right_below_from_head():
+            self.update(new_head_x, head_y, head_x, head_y)
+        elif self.is_tail_right_above_from_head():
+            self.update(new_head_x, head_y, head_x, head_y)
+
+        self.update_visited_positions(self.tail)
 
     def step_up(self):
-        pass
+        head_x = self.head[X]
+        head_y = self.head[Y]
+
+        new_head_y = head_y + 1
+
+        if self.is_tail_on_head() or self.is_tail_left_from_head() or \
+                self.is_tail_right_from_head() or self.is_tail_above_from_head() or \
+                self.is_tail_left_above_from_head() or self.is_tail_right_above_from_head():
+            self.update_head(head_x, new_head_y)
+        elif self.is_tail_below_from_head():
+            self.update(head_x, new_head_y, head_x, head_y)
+        elif self.is_tail_left_below_from_head():
+            self.update(head_x, new_head_y, head_x, head_y)
+        elif self.is_tail_right_below_from_head():
+            self.update(head_x, new_head_y, head_x, head_y)
+
+        self.update_visited_positions(self.tail)
 
     def step_down(self):
-        pass
+        head_x = self.head[X]
+        head_y = self.head[Y]
+
+        new_head_y = head_y - 1
+
+        if self.is_tail_on_head() or self.is_tail_left_from_head() or \
+                self.is_tail_right_from_head() or self.is_tail_below_from_head() or \
+                self.is_tail_left_below_from_head() or self.is_tail_right_below_from_head():
+            self.update_head(head_x, new_head_y)
+        elif self.is_tail_above_from_head():
+            self.update(head_x, new_head_y, head_x, head_y)
+        elif self.is_tail_left_above_from_head():
+            self.update(head_x, new_head_y, head_x, head_y)
+        elif self.is_tail_right_above_from_head():
+            self.update(head_x, new_head_y, head_x, head_y)
+
+        self.update_visited_positions(self.tail)
+
+    # Positionsupdates - Hilfsmethoden
+
+    def update(self, new_x_head: int, new_y_head: int, new_x_tail: int, new_y_tail: int):
+        self.update_head(new_x_head, new_y_head)
+        self.update_tail(new_x_tail, new_y_tail)
+
+    def update_head(self, new_x: int, new_y: int):
+        self.head = (new_x, new_y)
+
+    def update_tail(self, new_x: int, new_y: int):
+        self.tail = (new_x, new_y)
 
     # Positionsbools fuer die Tailposition
 
@@ -124,24 +194,35 @@ class Rope:
         head_y = self.head[Y]
         tail_x = self.tail[X]
         tail_y = self.tail[Y]
-        return tail_x == head_x + 1 and tail_y == head_y - 1
+        return tail_x == head_x - 1 and tail_y == head_y - 1
 
     def is_tail_right_below_from_head(self) -> bool:
         head_x = self.head[X]
         head_y = self.head[Y]
         tail_x = self.tail[X]
         tail_y = self.tail[Y]
-        return tail_x == head_x - 1 and tail_y == head_y - 1
+        return tail_x == head_x + 1 and tail_y == head_y - 1
+
+
+def process_instructions(rope: Rope, instructions: list[str]) -> None:
+    for instruction in instructions:
+        rope.process_one_instruction(instruction)
+
+
+def count_visited_tail_positions(filename: str):
+    rope = Rope((0, 0), (0, 0))
+    instructions = preprocess_input(filename)
+    process_instructions(rope, instructions)
+    return len(rope.visited_positions)
 
 
 def main():
     filename_test = "../input_data/09_12_test_data.txt"
+    filename_problem = "../input_data/09_12_problem_data.txt"
 
-    rope = Rope((0, 0), (0, 0))
-    print(rope)
-    instructions = preprocess_input(filename_test)
-    rope.process_one_instruction("RRRR")
-    print(rope)
+    number_of_visited_tail_positions = count_visited_tail_positions(filename_problem)
+
+    print(f'The number of positions visited by the tail is {number_of_visited_tail_positions}.')
 
 
 if __name__ == "__main__":
