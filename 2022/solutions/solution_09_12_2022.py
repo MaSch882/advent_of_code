@@ -45,10 +45,23 @@ class Rope:
 
     # step-Logik
 
-    def step_right(self):
+    def step_right(self) -> None:
         head_x = self.head[X]
         head_y = self.head[Y]
-        new_head_coordinates = (head_x + 1, head_y)
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
+        if self.is_tail_on_head():
+            new_head_x = head_x + 1
+            self.head = (new_head_x, head_y)
+        if self.is_tail_left_from_head():
+            new_head_x = head_x + 1
+            new_tail_x = tail_x + 1
+            self.head = (new_head_x, head_y)
+            self.tail = (new_tail_x, tail_y)
+
+        # TODO: Faelle implementieren.
+
+        self.update_visited_positions(self.tail)
 
     def step_left(self):
         pass
@@ -67,23 +80,58 @@ class Rope:
     def is_tail_left_from_head(self) -> bool:
         head_x = self.head[X]
         head_y = self.head[Y]
-        tail_x = self.head[X]
-        tail_y = self.head[Y]
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
         return tail_x == head_x - 1 and tail_y == head_y
 
     def is_tail_right_from_head(self) -> bool:
         head_x = self.head[X]
         head_y = self.head[Y]
-        tail_x = self.head[X]
-        tail_y = self.head[Y]
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
         return tail_x == head_x + 1 and tail_y == head_y
 
-    def is_tail_above_head(self) -> bool:
+    def is_tail_above_from_head(self) -> bool:
         head_x = self.head[X]
         head_y = self.head[Y]
-        tail_x = self.head[X]
-        tail_y = self.head[Y]
-        return head_x == tail_x and tail_y == head_y + 1
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
+        return tail_x == head_x and tail_y == head_y + 1
+
+    def is_tail_below_from_head(self) -> bool:
+        head_x = self.head[X]
+        head_y = self.head[Y]
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
+        return tail_x == head_x and tail_y == head_y - 1
+
+    def is_tail_left_above_from_head(self) -> bool:
+        head_x = self.head[X]
+        head_y = self.head[Y]
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
+        return tail_x == head_x - 1 and tail_y == head_y + 1
+
+    def is_tail_right_above_from_head(self) -> bool:
+        head_x = self.head[X]
+        head_y = self.head[Y]
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
+        return tail_x == head_x + 1 and tail_y == head_y + 1
+
+    def is_tail_left_below_from_head(self) -> bool:
+        head_x = self.head[X]
+        head_y = self.head[Y]
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
+        return tail_x == head_x + 1 and tail_y == head_y - 1
+
+    def is_tail_right_below_from_head(self) -> bool:
+        head_x = self.head[X]
+        head_y = self.head[Y]
+        tail_x = self.tail[X]
+        tail_y = self.tail[Y]
+        return tail_x == head_x - 1 and tail_y == head_y - 1
 
 
 def main():
