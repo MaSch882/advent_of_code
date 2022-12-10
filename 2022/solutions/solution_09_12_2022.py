@@ -217,12 +217,16 @@ def count_visited_tail_positions(filename: str):
 
 
 def main():
+    print("Solutions to problem 9: [https://adventofcode.com/2022/day/9]")
+
     filename_test = "../input_data/09_12_test_data.txt"
     filename_problem = "../input_data/09_12_problem_data.txt"
 
     number_of_visited_tail_positions = count_visited_tail_positions(filename_problem)
 
     print(f'The number of positions visited by the tail is {number_of_visited_tail_positions}.')
+
+    print("")
 
 
 if __name__ == "__main__":
