@@ -1,7 +1,7 @@
 from Utils import input_processing
 from solution_day_01_2016 import Walker
 
-filename = r"..\input_data\input_day_1_2016_part_1.txt"
+filename = r"..\..\input_data/input_day_01_2016.txt"
 
 
 def main():
