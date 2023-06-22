@@ -1,7 +1,7 @@
 from Utils import input_processing
-from solution_day_02_2016 import ComplexKeypad
-from solution_day_02_2016 import KeypadDecrypter
-from solution_day_02_2016 import SimpleKeypad
+from structure_day_02_2016 import ComplexKeypad
+from structure_day_02_2016 import KeypadDecrypter
+from structure_day_02_2016 import SimpleKeypad
 
 test_data = ["ULL", "RRDDD", "LURDL", "UUUUD"]
 

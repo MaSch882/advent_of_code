@@ -1,6 +1,6 @@
 from Utils import input_processing
-from solution_day_03_2016 import Triangle
-from solution_day_03_2016 import TriangleCounter
+from structure_day_03_2016 import Triangle
+from structure_day_03_2016 import TriangleCounter
 
 filename = r"..\..\input_data\input_day_03_2016.txt"
 

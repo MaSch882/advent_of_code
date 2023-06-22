@@ -1,5 +1,5 @@
 from Utils import input_processing
-from solution_day_01_2016 import Walker
+from structure_day_01_2016 import Walker
 
 filename = r"..\..\input_data/input_day_01_2016.txt"
 
