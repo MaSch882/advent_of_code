@@ -17,8 +17,9 @@ def main():
     for room in rooms:
         print_room_data(room)
 
-    roomtester = RoomTester(room3)
+    roomtester = RoomTester(room1)
     print(roomtester.symbol_counter)
+    print(roomtester.is_valid_room())
 
     print_solution_part_1()  #
     print_solution_part_2()  #

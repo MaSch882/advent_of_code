@@ -61,7 +61,26 @@ class RoomTester:
                 self.symbol_counter[char] = 1
 
     def sort_symbols(self):
+        """
+        Sortiert nach Anzahl absteigend,
+        bei Gleichstand lexikographisch aufsteigend.
+        :return:
+        """
         symbols = self.symbol_counter
+        items = symbols.items()
         sorted_symbols = {key: value for key, value in
-                          sorted(symbols.items(), key=lambda symbol: symbol[1], reverse=True)}
+                          sorted(sorted(items, key=lambda x: (x[1], x[0]), reverse=True)
+                                 , reverse=False)}
         self.symbol_counter = sorted_symbols
+
+    def is_valid_room(self):
+        checksum = self.room_to_test.checksum
+        five_most_used_symbols = list(self.symbol_counter.keys())[0:5]
+
+        actual_checksum = ""
+        for symbol in five_most_used_symbols:
+            actual_checksum += symbol
+
+        print(actual_checksum)
+
+        return checksum == actual_checksum
