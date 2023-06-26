@@ -1,11 +1,17 @@
+def build_mapping_letter_number():
+    return dict(zip(LETTER, range(0, 26)))
+
+
 class Room:
     encrypted_name: str = ""
     sector_id: str = ""
     checksum: str = ""
+    splitted_parts: list[str] = []
 
     def __init__(self, full_name: str):
         separated_parts_of_full_room_name = full_name.split("-")
         combined_id_and_checksum = separated_parts_of_full_room_name.pop()
+        self.splitted_parts = separated_parts_of_full_room_name
 
         self.extract_encrypted_name(separated_parts_of_full_room_name)
         self.extract_sector_id(combined_id_and_checksum)
@@ -98,3 +104,34 @@ class RoomIDSummator:
             if validator.is_valid_room():
                 self.id_sum += int(room.sector_id)
         return self.id_sum
+
+
+class RoomDecryptor:
+    room: Room
+
+    def __init__(self, room: Room):
+        self.room = room
+
+    def decrypt_room_name(self) -> str:
+        decrypted_name = ""
+
+        parts_to_decrypt = self.room.splitted_parts
+        offset = int(self.room.sector_id)
+        validator = RoomValidator(self.room)
+
+        if not validator.is_valid_room():
+            return decrypted_name
+
+        for part in parts_to_decrypt:
+            decrypted_name += self.decrypt_part(part, offset)
+            decrypted_name += " "
+
+        return decrypted_name
+
+    @staticmethod
+    def decrypt_part(part: str, offset: int) -> str:
+        decrypted = ""
+
+        for char in part:
+            decrypted += chr((ord(char) - ord("a") + offset) % 26 + ord("a"))
+        return decrypted
