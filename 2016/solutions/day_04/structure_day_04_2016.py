@@ -108,6 +108,7 @@ class RoomIDSummator:
 
 class RoomDecryptor:
     room: Room
+    decrypted_room_name: str
 
     def __init__(self, room: Room):
         self.room = room
