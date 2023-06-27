@@ -1,7 +1,3 @@
-def build_mapping_letter_number():
-    return dict(zip(LETTER, range(0, 26)))
-
-
 class Room:
     encrypted_name: str = ""
     sector_id: str = ""
@@ -112,27 +108,22 @@ class RoomDecryptor:
 
     def __init__(self, room: Room):
         self.room = room
+        self.decrypted_room_name = ""
 
     def decrypt_room_name(self) -> str:
-        decrypted_name = ""
-
         parts_to_decrypt = self.room.splitted_parts
         offset = int(self.room.sector_id)
         validator = RoomValidator(self.room)
 
         if not validator.is_valid_room():
-            return decrypted_name
+            return ""
 
         for part in parts_to_decrypt:
-            decrypted_name += self.decrypt_part(part, offset)
-            decrypted_name += " "
+            self.decrypt_part(part, offset)
+            self.decrypted_room_name += " "
 
-        return decrypted_name
+        return self.decrypted_room_name
 
-    @staticmethod
-    def decrypt_part(part: str, offset: int) -> str:
-        decrypted = ""
-
+    def decrypt_part(self, part: str, offset: int):
         for char in part:
-            decrypted += chr((ord(char) - ord("a") + offset) % 26 + ord("a"))
-        return decrypted
+            self.decrypted_room_name += chr((ord(char) - ord("a") + offset) % 26 + ord("a"))
