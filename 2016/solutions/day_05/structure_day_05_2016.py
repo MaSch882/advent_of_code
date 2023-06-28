@@ -61,6 +61,7 @@ class PositionBasedPasswordCracker:
         self.password_length = password_length
         self.appendix = 1
         self.password = ["X" for x in range(0, password_length)]
+        
         self.position_bit = position_bit - 1
         self.password_bit = password_bit - 1
         self.visited_bits = []

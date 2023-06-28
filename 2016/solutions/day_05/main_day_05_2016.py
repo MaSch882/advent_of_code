@@ -2,8 +2,8 @@ from structure_day_05_2016 import InOrderPasswordCracker, PositionBasedPasswordC
 
 
 def main():
-    # print_solution_part_1()  # f97c354d
-    print_solution_part_2()
+    print_solution_part_1()  # f97c354d
+    print_solution_part_2()  # 863dde27
 
 
 def print_solution_part_1():
