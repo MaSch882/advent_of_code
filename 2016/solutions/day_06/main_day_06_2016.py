@@ -3,30 +3,11 @@ from structure_day_06_2016 import MostFrequentErrorCorrector, LeastFrequentError
 
 filename = r"..\..\input_data\input_day_06_2016.txt"
 
-test_input = [
-    "eedadn",
-    "drvtee",
-    "eandsr",
-    "raavrd",
-    "atevrs",
-    "tsrnev",
-    "sdttsa",
-    "rasrtv",
-    "nssdts",
-    "ntnada",
-    "svetve",
-    "tesnvt",
-    "vntsnd",
-    "vrdear",
-    "dvrsen",
-    "enarar"
-]
-
 
 def main():
     words_with_error = get_words_with_error()
     print_solution_part_1(words_with_error)  # xhnqpqql
-    print_solution_part_2(words_with_error)  #
+    print_solution_part_2(words_with_error)  # brhailro
 
 
 def print_solution_part_1(words: list[str]):
