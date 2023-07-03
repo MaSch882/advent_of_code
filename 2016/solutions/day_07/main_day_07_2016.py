@@ -1,22 +1,26 @@
 from Utils import input_processing
 from structure_day_07_2016 import IPAdress
-from structure_day_07_2016 import TLSCounter
+from structure_day_07_2016 import TLSCounter, SSLCounter
 
 filename = r"..\..\input_data\input_day_07_2016.txt"
-
-test_data = ["abba[mnop]qrst", "abcd[bddb]xyyx", "aaaa[qwer]tyui", "ioxxoj[asdfgh]zxcvbn"]
-test_ips = [IPAdress(ip) for ip in test_data]
 
 
 def main():
     ips = read_input()
     print_solution_part_1(ips)  # 105
+    print_solution_part_2(ips)  # 258
 
 
 def print_solution_part_1(ips: list[IPAdress]):
-    counter = TLSCounter()
-    ips_with_tls = counter.count_ips_with_tls(ips)
+    tls_counter = TLSCounter()
+    ips_with_tls = tls_counter.count_ips_with_tls(ips)
     print(f"{ips_with_tls} IPs support TLS.")
+
+
+def print_solution_part_2(ips: list[IPAdress]):
+    ssl_counter = SSLCounter()
+    ips_with_ssl = ssl_counter.count_ips_with_ssl(ips)
+    print(f"{ips_with_ssl} IPs support SSL.")
 
 
 def read_input() -> list[IPAdress]:

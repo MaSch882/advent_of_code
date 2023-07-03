@@ -2,25 +2,24 @@ from dataclasses import dataclass
 
 
 class PalindromeChecker:
-    to_check: str
 
-    def __init__(self, to_check: str):
-        self.to_check = to_check
+    def __init__(self):
+        raise NotImplementedError("PalindromeChecker must not be instantiated.")
 
     @staticmethod
     def is_palindrome(sequence: str) -> bool:
         return sequence == sequence[::-1]
 
     @staticmethod
-    def has_palindrome_with_given_length(sequence: str, length: int, different_characters: bool) -> bool:
+    def has_palindrome(sequence: str, length: int, different_characters: bool) -> bool:
         for i, char in enumerate(sequence):
-            block_of_four_chars = sequence[i:i + length]
-            if len(block_of_four_chars) != length:
+            block = sequence[i:i + length]
+            if len(block) != length:
                 return False
 
-            is_palindrome = PalindromeChecker.is_palindrome(block_of_four_chars)
+            is_palindrome = PalindromeChecker.is_palindrome(block)
             if different_characters:
-                has_different_characters = PalindromeChecker.contains_more_than_one_character(block_of_four_chars)
+                has_different_characters = PalindromeChecker.contains_more_than_one_character(block)
                 if is_palindrome and has_different_characters:
                     return True
             else:
@@ -30,15 +29,53 @@ class PalindromeChecker:
 
     @staticmethod
     def has_palindrome_of_length(sequence: str, length: int) -> bool:
-        return PalindromeChecker.has_palindrome_with_given_length(sequence, length, different_characters=False)
+        return PalindromeChecker.has_palindrome(sequence, length, different_characters=False)
 
     @staticmethod
     def has_palindrome_of_length_with_different_chars(sequence: str, length: int) -> bool:
-        return PalindromeChecker.has_palindrome_with_given_length(sequence, length, different_characters=True)
+        return PalindromeChecker.has_palindrome(sequence, length, different_characters=True)
 
     @staticmethod
     def contains_more_than_one_character(sequence: str) -> bool:
         return sequence.count(sequence[0]) != len(sequence)
+
+
+class PalindromeExtractor:
+
+    def __init__(self):
+        raise NotImplementedError("PalindromeExtractor must not be instantiated.")
+
+    @staticmethod
+    def extract_palindromes_containing_more_than_one_character(to_extract: str, length: int):
+        palindromes = []
+
+        for i, char in enumerate(to_extract):
+            block = to_extract[i:i + length]
+
+            if len(block) != length:
+                continue
+
+            is_palindrome = PalindromeChecker.is_palindrome(block)
+            contains_more_than_one_character = PalindromeChecker.contains_more_than_one_character(block)
+
+            if is_palindrome and contains_more_than_one_character:
+                palindromes.append(block)
+
+        return palindromes
+
+
+class AdjacentPalindromeCalculator:
+
+    @staticmethod
+    def calculate_adjacent_palindrome(palindrome: str):
+        """
+        Achtung: Hier nur fuer 3er-Palindrome. Sonst nicht definiert.
+        Wir gehen ferner davon aus, dass die API richtig befüllt wird.
+        """
+        first_char = palindrome[0]
+        second_char = palindrome[1]
+
+        return second_char + first_char + second_char
 
 
 @dataclass()
@@ -111,12 +148,39 @@ class TLSCounter:
 
 
 class SSLChecker:
+    ip_adress: IPAdress
+    hypernet_blocks: list[str]
+    supernet_blocks: list[str]
+    hypernet_palindromes: list[str]
+    supernet_palindromes: list[str]
 
     def __init__(self, ip: IPAdress):
-        pass
+        self.ip_adress = ip
+        self.hypernet_blocks = ip.hypernet_blocks
+        self.supernet_blocks = ip.supernet_blocks
+        self.hypernet_palindromes = []
+        self.supernet_palindromes = []
+        self.extract_all_palindromes()
+
+    def extract_all_palindromes(self):
+        for hypernet_block in self.hypernet_blocks:
+            hypernet_palindromes = PalindromeExtractor.extract_palindromes_containing_more_than_one_character(
+                hypernet_block, 3)
+            self.hypernet_palindromes.extend(hypernet_palindromes)
+        for supernet_block in self.supernet_blocks:
+            supernet_palindromes = PalindromeExtractor.extract_palindromes_containing_more_than_one_character(
+                supernet_block, 3)
+            self.supernet_palindromes.extend(supernet_palindromes)
 
     def supports_ssl(self):
-        pass
+        supernet_palindromes = self.supernet_palindromes
+        hypernet_palindromes = self.hypernet_palindromes
+
+        for supernet_palindrome in supernet_palindromes:
+            adjacent_palindrome = AdjacentPalindromeCalculator.calculate_adjacent_palindrome(supernet_palindrome)
+            if adjacent_palindrome in hypernet_palindromes:
+                return True
+        return False
 
 
 class SSLCounter:
