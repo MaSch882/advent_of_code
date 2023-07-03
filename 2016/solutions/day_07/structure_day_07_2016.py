@@ -1,6 +1,46 @@
 from dataclasses import dataclass
 
 
+class PalindromeChecker:
+    to_check: str
+
+    def __init__(self, to_check: str):
+        self.to_check = to_check
+
+    @staticmethod
+    def is_palindrome(sequence: str) -> bool:
+        return sequence == sequence[::-1]
+
+    @staticmethod
+    def has_palindrome_with_given_length(sequence: str, length: int, different_characters: bool) -> bool:
+        for i, char in enumerate(sequence):
+            block_of_four_chars = sequence[i:i + length]
+            if len(block_of_four_chars) != length:
+                return False
+
+            is_palindrome = PalindromeChecker.is_palindrome(block_of_four_chars)
+            if different_characters:
+                has_different_characters = PalindromeChecker.contains_more_than_one_character(block_of_four_chars)
+                if is_palindrome and has_different_characters:
+                    return True
+            else:
+                if is_palindrome:
+                    return True
+        return False
+
+    @staticmethod
+    def has_palindrome_of_length(sequence: str, length: int) -> bool:
+        return PalindromeChecker.has_palindrome_with_given_length(sequence, length, different_characters=False)
+
+    @staticmethod
+    def has_palindrome_of_length_with_different_chars(sequence: str, length: int) -> bool:
+        return PalindromeChecker.has_palindrome_with_given_length(sequence, length, different_characters=True)
+
+    @staticmethod
+    def contains_more_than_one_character(sequence: str) -> bool:
+        return sequence.count(sequence[0]) != len(sequence)
+
+
 @dataclass()
 class IPAdress:
     raw_ip: str
@@ -42,32 +82,16 @@ class TLSChecker:
 
     def has_palindrome_in_non_hypernet_seq(self):
         for sequence in self.supernet_blocks:
-            has_palindrome = self.has_palindrome_of_length_four_with_different_chars(sequence)
+            has_palindrome = PalindromeChecker.has_palindrome_of_length_with_different_chars(sequence, 4)
             if has_palindrome:
                 return True
         return False
 
     def has_palindrome_in_hypernet_seq(self):
         for sequence in self.hypernet_blocks:
-            has_palindrome = self.has_palindrome_of_length_four_with_different_chars(sequence)
+            has_palindrome = PalindromeChecker.has_palindrome_of_length_with_different_chars(sequence, 4)
             if has_palindrome:
                 return True
-        return False
-
-    @staticmethod
-    def has_palindrome_of_length_four_with_different_chars(sequence: str) -> bool:
-        for i, char in enumerate(sequence):
-            try:
-                first = sequence[i]
-                second = sequence[i + 1]
-                third = sequence[i + 2]
-                fourth = sequence[i + 3]
-
-                if first == fourth and second == third and first != second:
-                    return True
-
-            except IndexError:
-                return False
         return False
 
 
