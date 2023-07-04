@@ -17,6 +17,23 @@ class FirstNiceWordCounter:
         return condition_1 and condition_2 and condition_3
 
 
+class SecondNiceWordCounter:
+    @staticmethod
+    def count_nice_words(list_of_words: list[str]) -> int:
+        number_of_nice_words = 0
+
+        for word in list_of_words:
+            if FirstNiceWordCounter.is_nice(word):
+                number_of_nice_words += 1
+        return number_of_nice_words
+
+    @staticmethod
+    def is_nice(word: str) -> bool:
+        condition_1 = True
+        condition_2 = True
+        return condition_1 and condition_2
+
+
 class StringChecker:
     @staticmethod
     def contains_at_least_three_vowels(word: str) -> bool:
