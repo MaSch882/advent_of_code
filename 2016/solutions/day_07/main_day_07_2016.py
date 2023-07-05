@@ -1,4 +1,4 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_07_2016 import IPAdress
 from structure_day_07_2016 import TLSCounter, SSLCounter
 
@@ -24,7 +24,7 @@ def print_solution_part_2(ips: list[IPAdress]):
 
 
 def read_input() -> list[IPAdress]:
-    input_strings = input_processing.read_input(filename)
+    input_strings = InputReader.read_input(filename)
     return [IPAdress(ip) for ip in input_strings]
 
 

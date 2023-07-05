@@ -1,4 +1,4 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_02_2015 import Present, PresentCalculator
 
 filename = r"..\..\input_data/input_day_02_2015.txt"
@@ -12,7 +12,7 @@ def main():
 
 
 def build_presents():
-    input_strings = input_processing.read_input(filename)
+    input_strings = InputReader.read_input(filename)
     return unzip_measures_to_presents(input_strings)
 
 

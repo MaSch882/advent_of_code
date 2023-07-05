@@ -1,4 +1,4 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_02_2016 import ComplexKeypad
 from structure_day_02_2016 import KeypadDecrypter
 from structure_day_02_2016 import SimpleKeypad
@@ -9,7 +9,7 @@ filename = r"..\..\input_data\input_day_02_2016.txt"
 
 
 def main():
-    set_of_commands = input_processing.read_input(filename)
+    set_of_commands = InputReader.read_input(filename)
 
     print_solution_part_1(set_of_commands)  # 52981
     print_solution_part_2(set_of_commands)  # 74CD2

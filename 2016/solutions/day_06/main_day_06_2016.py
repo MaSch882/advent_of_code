@@ -1,4 +1,4 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_06_2016 import MostFrequentErrorCorrector, LeastFrequentErrorCorrector
 
 filename = r"..\..\input_data\input_day_06_2016.txt"
@@ -23,7 +23,7 @@ def print_solution_part_2(words: list[str]):
 
 
 def get_words_with_error():
-    return input_processing.read_input(filename=filename)
+    return InputReader.read_input(filename=filename)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_04_2016 import Room
 from structure_day_04_2016 import RoomDecryptor
 from structure_day_04_2016 import RoomIDSummator
@@ -15,7 +15,7 @@ def main():
 
 
 def read_input(file: str):
-    return input_processing.read_input(file)
+    return InputReader.read_input(file)
 
 
 def build_list_of_rooms(list_of_room_string: list[str]) -> list[Room]:

@@ -1,4 +1,4 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_03_2016 import Triangle
 from structure_day_03_2016 import TriangleCounter
 
@@ -31,7 +31,7 @@ def print_solution_part_2(triangles: list[Triangle]):
 
 def build_triangles_from_input_vertically(name: str) -> list[Triangle]:
     # Einlesen und an ',' splitten
-    inputs = input_processing.read_input(name)
+    inputs = InputReader.read_input(name)
     inputs = [x.split() for x in inputs]
 
     # Innere Listen auflösen und in ints konvertieren
@@ -81,7 +81,7 @@ def group_list_by_three(list_to_group: list[int]) -> list[list[int]]:
 
 
 def build_triangles_from_input_horizontally(name: str) -> list[Triangle]:
-    inputs = input_processing.read_input(name)
+    inputs = InputReader.read_input(name)
     sidelength_tuples_as_strings = [x.split() for x in inputs]
 
     sidelength_tuples = []

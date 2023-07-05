@@ -1,4 +1,4 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_01_2015 import FloorCalculator
 
 filename = r"..\..\input_data/input_day_01_2015.txt"
@@ -22,7 +22,7 @@ def print_solution_part_2(instruction: str):
 
 
 def read_input() -> str:
-    return input_processing.read_input(filename)[0]
+    return InputReader.read_input(filename)[0]
 
 
 if __name__ == '__main__':

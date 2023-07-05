@@ -1,11 +1,11 @@
-from Utils import input_processing
+from Utils.input_processing import InputReader
 from structure_day_03_2015 import Santa
 
 filename = r"..\..\input_data/input_day_03_2015.txt"
 
 
 def main():
-    elves_instructions = input_processing.read_input(filename)[0]
+    elves_instructions = InputReader.read_input(filename)[0]
 
     print_solution_part_1(elves_instructions)  # 2565
     print_solution_part_2(elves_instructions)  # 2639
