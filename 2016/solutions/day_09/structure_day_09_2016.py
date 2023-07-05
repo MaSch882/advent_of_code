@@ -1,9 +1,16 @@
 from dataclasses import dataclass
 
-from Utils.strings import StringUtils
+from Utils.lists import ListUtils
 
 
 class FormatDecrompessor:
+
+    @staticmethod
+    def decompress_all(list_of_strings: list[str]) -> list[str]:
+        decompressed = []
+        for string in list_of_strings:
+            decompressed.append(FormatDecrompessor.decrompress(string))
+        return decompressed
 
     @staticmethod
     def decrompress(string: str) -> str:
@@ -11,20 +18,14 @@ class FormatDecrompessor:
         decompressed_string = ""
 
         while len(string_as_list) != 0:
-            current_character = string_as_list[0]
+            current_character = ListUtils.get_first(string_as_list)
             if current_character != "(":
-                decompressed_string += current_character
+                decompressed_string += ListUtils.get_and_delete_first(string_as_list)
             else:
                 marker = MarkerExtractor.extract_next_marker(string_as_list)
                 decompressed_string += MarkerProcessor.process_marker(marker, string_as_list)
-                print(marker)
-                print(decompressed_string)
 
-                # TODO Marker decompress implementieren
-            string_as_list.pop(0)
-
-        print(string_as_list)
-        print(decompressed_string)
+        return decompressed_string
 
 
 @dataclass()
@@ -36,14 +37,20 @@ class Marker:
 class MarkerExtractor:
 
     @staticmethod
-    def extract_next_marker(string_as_list) -> Marker:
-        StringUtils.get_and_delete_first(string_as_list)
+    def extract_next_marker(string_as_list: list[str]) -> Marker:
+        ListUtils.get_and_delete_first(string_as_list)
         marker_list = []
-        while string_as_list[0] != ")":
+        while ListUtils.get_first(string_as_list) != ")":
             marker_list += string_as_list.pop(0)
-        marker_list.remove("x")
-        StringUtils.get_and_delete_first(string_as_list)
-        marker = Marker(marker_list[0], marker_list[1])
+
+        marker_string = ""
+        for string in marker_list:
+            marker_string += string
+
+        splitted_marker_string = marker_string.split("x")
+
+        ListUtils.get_and_delete_first(string_as_list)
+        marker = Marker(int(splitted_marker_string[0]), int(splitted_marker_string[1]))
         return marker
 
 
@@ -51,5 +58,12 @@ class MarkerProcessor:
 
     @staticmethod
     def process_marker(marker: Marker, list_to_process: list[str]) -> str:
-        print(list_to_process)
-        return "?"
+        sequence_to_repeat = ""
+        for i in range(0, marker.substring_length):
+            sequence_to_repeat += ListUtils.get_and_delete_first(list_to_process)
+
+        repeated_sequence = ""
+        for i in range(0, marker.times_to_repeat):
+            repeated_sequence += sequence_to_repeat
+
+        return repeated_sequence
