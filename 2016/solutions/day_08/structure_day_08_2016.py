@@ -14,7 +14,7 @@ class Screen:
     def preparate_empty_screen(self) -> list[list[str]]:
         width = self.screen_width
         height = self.screen_height
-        empty_column = ["." for i in range(0, width)]
+        empty_column = ["."] * width
         matrix = [empty_column.copy() for i in range(0, height)]
         return matrix
 
