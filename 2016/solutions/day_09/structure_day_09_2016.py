@@ -3,6 +3,12 @@ from dataclasses import dataclass
 from Utils.lists import ListUtils
 
 
+@dataclass()
+class Marker:
+    substring_length: int
+    times_to_repeat: int
+
+
 class FormatDecrompessor:
 
     @staticmethod
@@ -27,11 +33,37 @@ class FormatDecrompessor:
 
         return decompressed_string
 
+    @staticmethod
+    def compute_decompressed_length_without_decompression(string: str) -> int:
+        string_as_list = [x for x in string]
+        decompressed_length = 0
 
-@dataclass()
-class Marker:
-    substring_length: int
-    times_to_repeat: int
+        while len(string_as_list) != 0:
+            current_character = ListUtils.get_first(string_as_list)
+            if current_character != "(":
+                decompressed_length += 1
+                string_as_list.pop(0)
+            else:
+                marker, marker_string = FormatDecrompessor.extract_next_marker_and_string(string_as_list)
+                decompressed_length += marker.times_to_repeat * FormatDecrompessor.compute_decompressed_length_without_decompression(
+                    marker_string)
+
+        return decompressed_length
+
+    @staticmethod
+    def extract_next_marker_and_string(string_as_list: list[str]) -> [Marker, str]:
+        marker = MarkerExtractor.extract_next_marker(string_as_list)
+        string_length = marker.substring_length
+
+        char_list = []
+        for i in range(0, string_length):
+            char_list.append(string_as_list.pop(0))
+
+        marker_string = ""
+        for char in char_list:
+            marker_string += char
+
+        return marker, marker_string
 
 
 class MarkerExtractor:
