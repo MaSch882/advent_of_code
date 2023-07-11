@@ -1,9 +1,7 @@
 from Utils.input_processing import InputReader
-from structure_day_09_2016 import FormatDecrompessor
+from structure_day_09_2016 import SimpleFormatDecompressor, DecompressedLengthCalculator
 
 filename = r"..\..\input_data\input_day_09_2016.txt"
-
-test_data = ["(27x12)(20x12)(13x14)(7x10)(1x12)A"]
 
 
 def main():
@@ -11,19 +9,20 @@ def main():
 
     # log_teststrings()
 
-    print_solution_part_1(compressed_file)
-    print_solution_part_2(compressed_file)
+    print_solution_part_1(compressed_file)  # 110346
+    print_solution_part_2(compressed_file)  # 10774309173
 
 
 def print_solution_part_1(compressed_file: str):
-    decompressed_file = FormatDecrompessor.decrompress(compressed_file)
+    decompressed_file = SimpleFormatDecompressor.decrompress(compressed_file)
     decompressed_length = len(decompressed_file)
 
     print(f"The decompressed length of the file is {decompressed_length}.")
 
 
 def print_solution_part_2(compressed_file: str):
-    decompressed_length = FormatDecrompessor.compute_decompressed_length_without_decompression(compressed_file)
+    decompressed_length = DecompressedLengthCalculator.compute_decompressed_length_recursively(
+        compressed_file)
     print(f"The decompressed length of the file using the recursive compression algorithm is {decompressed_length}.")
 
 
@@ -40,7 +39,7 @@ def log_teststrings():
 
     for string in data.keys():
         expected = data[string]
-        calculated = FormatDecrompessor.compute_decompressed_length_without_decompression(string)
+        calculated = SimpleFormatDecompressor.compute_decompressed_length_without_decompression(string)
 
         equal = expected == calculated
         message = "OK." if equal else "Error!"
