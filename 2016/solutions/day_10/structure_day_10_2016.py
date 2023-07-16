@@ -13,6 +13,7 @@ class Chip:
         return self.value < other.value
 
 
+@dataclass()
 class Bot:
     """
     A class modelling a bot.
@@ -40,20 +41,20 @@ class Bot:
 
     def receive_chip(self, chip: Chip) -> None:
         if self.is_full():
-            raise BotSizeError(f"Bot {self.id} already has 2 chips.")
+            raise NumberOfChipsError(f"Bot {self.id} already has 2 chips.")
 
         self.chips.append(chip)
         self.chips.sort()
 
     def pop_low_chip(self) -> Chip:
         if self.is_empty():
-            raise BotSizeError(f"Bot {self.id} has no chips to pop.")
+            raise NumberOfChipsError(f"Bot {self.id} has no chips to pop.")
 
         return self.chips.pop(0)
 
     def pop_high_chip(self) -> Chip:
         if self.is_empty():
-            raise BotSizeError(f"Bot {self.id} has no chips to pop.")
+            raise NumberOfChipsError(f"Bot {self.id} has no chips to pop.")
 
         # If only one chip is present, this is the high chip.
         if len(self.chips) == 1:
@@ -62,7 +63,7 @@ class Bot:
         return self.chips.pop(1)
 
 
-class BotSizeError(ValueError):
+class NumberOfChipsError(ValueError):
     def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
@@ -102,21 +103,6 @@ class BotBuilder:
         return Bot(id, [])
 
 
-class CommandHandler:
-
-    @staticmethod
-    def take_chip_from_bot(value: int, bot_id: int):
-        pass
-
-    @staticmethod
-    def give_chip_to_bot(value: int, bot_id: int):
-        pass
-
-    @staticmethod
-    def put_chip_to_output_bin(value: int, output_id: int):
-        pass
-
-
 class OutputBin:
     id: int
     chips: list[Chip]
@@ -124,3 +110,75 @@ class OutputBin:
     def __init__(self, id: int):
         self.id = id
         self.chips = []
+
+
+@dataclass()
+class FactorySimulation:
+    bots: list[Bot]
+    bot_ids: list[int]
+    bins: list[OutputBin]
+    bin_ids: list[int]
+
+    def __init__(self):
+        self.bots = []
+        self.bot_ids = []
+        self.bins = []
+        self.bin_ids = []
+
+
+class InstructionParser:
+
+    @staticmethod
+    def parse_command(command: str) -> list[str]:
+        """
+        Parses commands from the given format into a structured target format.
+
+        Given format
+            "value {x} goes to bot {n}"
+        parses to
+            ["assign", int(x), int(n)].
+
+        Given format
+            "bot {n} gives low to {entity1} {m} and high to {entity2} {k}"
+        parses to
+            ["transfer, int(n), str(entity1), int(m), str(entity2), int(k)].
+
+        Invalid formats are ignored.
+
+        :param command: The command using the given format.
+        :return: The parsed command using above target format.
+        """
+        if command.startswith("value"):
+            return InstructionParser.parse_assignment(command)
+
+        if command.startswith("bot"):
+            return InstructionParser.parse_transfer(command)
+
+        raise IllegalArgumentError(f"Given command starts with the unknown literal '{command.split()[0]}'.")
+
+    @staticmethod
+    def parse_assignment(command: str) -> list[str]:
+        parsed_command = ["assign"]
+
+        splitted_command = command.split()
+        filtered_values = list(filter(lambda x: x.isnumeric(), splitted_command))
+        int_values = map(lambda x: int(x), filtered_values)
+        parsed_command.extend(int_values)
+
+        return parsed_command
+
+    @staticmethod
+    def parse_transfer(command: str) -> list[str]:
+        parsed_command = ["transfer"]
+
+        splitted_command = command.split()
+        splitted_command.pop(0)
+
+        while len(splitted_command) != 0:
+            next_string = splitted_command.pop(0)
+            if next_string in ["bot", "output"]:
+                parsed_command.append(next_string)
+            if next_string.isnumeric():
+                parsed_command.append(int(next_string))
+
+        return parsed_command

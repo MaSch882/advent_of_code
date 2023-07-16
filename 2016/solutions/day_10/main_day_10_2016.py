@@ -1,3 +1,5 @@
+from structure_day_10_2016 import FactorySimulation
+
 test_instructions = ["value 5 goes to bot 2",
                      "bot 2 gives low to bot 1 and high to bot 0",
                      "value 3 goes to bot 1",
@@ -7,7 +9,9 @@ test_instructions = ["value 5 goes to bot 2",
 
 
 def main():
-    pass
+    sim = FactorySimulation()
+
+    print(sim)
 
 
 if __name__ == "__main__":

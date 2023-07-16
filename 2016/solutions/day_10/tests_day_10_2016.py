@@ -1,7 +1,7 @@
 import unittest
 
 from Utils.errors import IllegalArgumentError
-from structure_day_10_2016 import Chip, Bot, BotSizeError, BotBuilder
+from structure_day_10_2016 import Chip, Bot, NumberOfChipsError, BotBuilder, InstructionParser
 
 
 class TestChip(unittest.TestCase):
@@ -79,7 +79,7 @@ class TestBot(unittest.TestCase):
     def test_receive_chip_invalid(self):
         bot = Bot(1, [Chip(10), Chip(20)])
 
-        with self.assertRaises(BotSizeError):
+        with self.assertRaises(NumberOfChipsError):
             bot.receive_chip(Chip(30))
 
     def test_pop_low_chip_valid(self):
@@ -99,7 +99,7 @@ class TestBot(unittest.TestCase):
     def test_pop_low_chip_invalid(self):
         bot = Bot(1, [])
 
-        with self.assertRaises(BotSizeError):
+        with self.assertRaises(NumberOfChipsError):
             bot.pop_low_chip()
 
     def test_pop_high_chip_valid(self):
@@ -117,7 +117,7 @@ class TestBot(unittest.TestCase):
     def test_pop_high_chip_invalid(self):
         bot = Bot(1, [])
 
-        with self.assertRaises(BotSizeError):
+        with self.assertRaises(NumberOfChipsError):
             bot.pop_high_chip()
 
 
@@ -195,3 +195,82 @@ class TestBotBuilder(unittest.TestCase):
         self.assertEqual(bot.id, id)
         self.assertIsNotNone(bot.chips)
         self.assertEqual(len(bot.chips), 0)
+
+
+class TestInstructionParser(unittest.TestCase):
+
+    def test_parse_command_value_assignment(self):
+        command = "value 5 goes to bot 2"
+        # Expected: ["assign", 5, 2]
+
+        parsed_command = InstructionParser.parse_command(command)
+
+        self.assertEqual(len(parsed_command), 3)
+        self.assertEqual(parsed_command[0], "assign")
+        self.assertEqual(parsed_command[1], 5)
+        self.assertEqual(parsed_command[2], 2)
+
+    def test_parse_command_transfer_chips_bot_bot(self):
+        command = "bot 2 gives low to bot 1 and high to bot 0"
+        # Excpected: ["transfer", 2, "bot", 1, "bot", 0]
+
+        parsed_command = InstructionParser.parse_command(command)
+
+        self.assertEqual(len(parsed_command), 6)
+        self.assertEqual(parsed_command[0], "transfer")
+        self.assertEqual(parsed_command[1], 2)
+        self.assertEqual(parsed_command[2], "bot")
+        self.assertEqual(parsed_command[3], 1)
+        self.assertEqual(parsed_command[4], "bot")
+        self.assertEqual(parsed_command[5], 0)
+
+    def test_parse_command_transfer_chips_bot_output(self):
+        command = "bot 2 gives low to bot 1 and high to output 0"
+        # Excpected: ["transfer", 2, "output", 1, "bot", 0]
+
+        parsed_command = InstructionParser.parse_command(command)
+
+        self.assertEqual(len(parsed_command), 6)
+        self.assertEqual(parsed_command[0], "transfer")
+        self.assertEqual(parsed_command[1], 2)
+        self.assertEqual(parsed_command[2], "bot")
+        self.assertEqual(parsed_command[3], 1)
+        self.assertEqual(parsed_command[4], "output")
+        self.assertEqual(parsed_command[5], 0)
+
+    def test_parse_command_transfer_chips_output_bot(self):
+        command = "bot 2 gives low to output 1 and high to bot 0"
+        # Excpected: ["transfer", 2, "bot", 1, "bot", 0]
+
+        parsed_command = InstructionParser.parse_command(command)
+
+        self.assertEqual(len(parsed_command), 6)
+        self.assertEqual(parsed_command[0], "transfer")
+        self.assertEqual(parsed_command[1], 2)
+        self.assertEqual(parsed_command[2], "output")
+        self.assertEqual(parsed_command[3], 1)
+        self.assertEqual(parsed_command[4], "bot")
+        self.assertEqual(parsed_command[5], 0)
+
+    def test_parse_command_transfer_chips_output_output(self):
+        command = "bot 2 gives low to output 1 and high to output 0"
+        # Excpected: ["transfer", 2, "bot", 1, "bot", 0]
+
+        parsed_command = InstructionParser.parse_command(command)
+
+        self.assertEqual(len(parsed_command), 6)
+        self.assertEqual(parsed_command[0], "transfer")
+        self.assertEqual(parsed_command[1], 2)
+        self.assertEqual(parsed_command[2], "output")
+        self.assertEqual(parsed_command[3], 1)
+        self.assertEqual(parsed_command[4], "output")
+        self.assertEqual(parsed_command[5], 0)
+
+    def test_parse_command_invalid_command(self):
+        command = "do something odd"
+        first = command.split()[0]
+
+        with self.assertRaises(IllegalArgumentError) as error:
+            InstructionParser.parse_command(command)
+
+        self.assertEqual(error.exception.message, f"Given command starts with the unknown literal '{first}'.")
