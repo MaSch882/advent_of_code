@@ -14,6 +14,12 @@ class Chip:
 
 
 class Bot:
+    """
+    A class modelling a bot.
+    Has an identification number ('id') and a list containing its handled chips ('chips').
+    At all points of execution it is guaranteed that the list of chips is sorted:
+    chips[0] contains the lowest value, chips[1] contains the highest value.
+    """
     id: int
     chips: list[Chip]
 
@@ -28,6 +34,38 @@ class Bot:
 
     def is_full(self):
         return len(self.chips) == 2
+
+    def is_empty(self):
+        return len(self.chips) == 0
+
+    def receive_chip(self, chip: Chip) -> None:
+        if self.is_full():
+            raise BotSizeError(f"Bot {self.id} already has 2 chips.")
+
+        self.chips.append(chip)
+        self.chips.sort()
+
+    def pop_low_chip(self) -> Chip:
+        if self.is_empty():
+            raise BotSizeError(f"Bot {self.id} has no chips to pop.")
+
+        return self.chips.pop(0)
+
+    def pop_high_chip(self) -> Chip:
+        if self.is_empty():
+            raise BotSizeError(f"Bot {self.id} has no chips to pop.")
+
+        # If only one chip is present, this is the high chip.
+        if len(self.chips) == 1:
+            return self.pop_low_chip()
+
+        return self.chips.pop(1)
+
+
+class BotSizeError(ValueError):
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
 
 
 class BotBuilder:
@@ -64,5 +102,25 @@ class BotBuilder:
         return Bot(id, [])
 
 
+class CommandHandler:
+
+    @staticmethod
+    def take_chip_from_bot(value: int, bot_id: int):
+        pass
+
+    @staticmethod
+    def give_chip_to_bot(value: int, bot_id: int):
+        pass
+
+    @staticmethod
+    def put_chip_to_output_bin(value: int, output_id: int):
+        pass
+
+
 class OutputBin:
-    pass
+    id: int
+    chips: list[Chip]
+
+    def __init__(self, id: int):
+        self.id = id
+        self.chips = []

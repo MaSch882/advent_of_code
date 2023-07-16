@@ -1,7 +1,7 @@
 import unittest
 
 from Utils.errors import IllegalArgumentError
-from structure_day_10_2016 import Chip, Bot, BotBuilder
+from structure_day_10_2016 import Chip, Bot, BotSizeError, BotBuilder
 
 
 class TestChip(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestBot(unittest.TestCase):
     def test__init__raises_error(self):
         chips = [Chip(1), Chip(2), Chip(3)]
 
-        with self.assertRaises(IllegalArgumentError) as context:
+        with self.assertRaises(IllegalArgumentError):
             Bot(1, chips)
 
     def test_is_full(self):
@@ -52,6 +52,73 @@ class TestBot(unittest.TestCase):
         self.assertFalse(bot_1.is_full())
         self.assertFalse(bot_2.is_full())
         self.assertTrue(bot_3.is_full())
+
+    def test_is_empty(self):
+        bot_1 = Bot(1, [])
+        bot_2 = Bot(2, [Chip(10)])
+        bot_3 = Bot(3, [Chip(10), Chip(20)])
+
+        self.assertTrue(bot_1.is_empty())
+        self.assertFalse(bot_2.is_empty())
+        self.assertFalse(bot_3.is_empty())
+
+    def test_receive_chip_valid(self):
+        bot_with_no_chip = Bot(1, [])
+        bot_with_no_chip.receive_chip(Chip(5))
+
+        self.assertEqual(len(bot_with_no_chip.chips), 1)
+        self.assertEqual(bot_with_no_chip.chips[0].value, 5)
+
+        bot_with_one_chip = Bot(1, [Chip(10)])
+        bot_with_one_chip.receive_chip(Chip(5))
+
+        self.assertEqual(len(bot_with_one_chip.chips), 2)
+        self.assertEqual(bot_with_one_chip.chips[0].value, 5)
+        self.assertEqual(bot_with_one_chip.chips[1].value, 10)
+
+    def test_receive_chip_invalid(self):
+        bot = Bot(1, [Chip(10), Chip(20)])
+
+        with self.assertRaises(BotSizeError):
+            bot.receive_chip(Chip(30))
+
+    def test_pop_low_chip_valid(self):
+        bot_with_one_chip = Bot(1, [Chip(10)])
+        chip = bot_with_one_chip.pop_low_chip()
+
+        self.assertTrue(bot_with_one_chip.is_empty())
+        self.assertIsNotNone(chip)
+        self.assertEqual(chip.value, 10)
+
+        bot_with_two_chips = Bot(2, [Chip(10), Chip(20)])
+        chip = bot_with_two_chips.pop_low_chip()
+
+        self.assertEqual(len(bot_with_two_chips.chips), 1)
+        self.assertEqual(chip.value, 10)
+
+    def test_pop_low_chip_invalid(self):
+        bot = Bot(1, [])
+
+        with self.assertRaises(BotSizeError):
+            bot.pop_low_chip()
+
+    def test_pop_high_chip_valid(self):
+        bot = Bot(1, [Chip(10), Chip(20)])
+        chip = bot.pop_high_chip()
+
+        self.assertEqual(len(bot.chips), 1)
+        self.assertEqual(chip.value, 20)
+
+        chip = bot.pop_high_chip()
+
+        self.assertEqual(len(bot.chips), 0)
+        self.assertEqual(chip.value, 10)
+
+    def test_pop_high_chip_invalid(self):
+        bot = Bot(1, [])
+
+        with self.assertRaises(BotSizeError):
+            bot.pop_high_chip()
 
 
 class TestBotBuilder(unittest.TestCase):
