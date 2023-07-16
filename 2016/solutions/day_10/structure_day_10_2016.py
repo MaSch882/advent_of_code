@@ -118,15 +118,21 @@ class FactorySimulation:
     bot_ids: list[int]
     bins: list[OutputBin]
     bin_ids: list[int]
+    commands: list[list[str]]
 
-    def __init__(self):
+    def __init__(self, commands: list[str]):
         self.bots = []
         self.bot_ids = []
         self.bins = []
         self.bin_ids = []
+        self.commands = InstructionParser.parse_commands(commands)
 
 
 class InstructionParser:
+
+    @staticmethod
+    def parse_commands(commands: list[str]) -> list[list[str]]:
+        return [InstructionParser.parse_command(command) for command in commands]
 
     @staticmethod
     def parse_command(command: str) -> list[str]:

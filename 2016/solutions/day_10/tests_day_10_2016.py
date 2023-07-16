@@ -1,7 +1,7 @@
 import unittest
 
 from Utils.errors import IllegalArgumentError
-from structure_day_10_2016 import Chip, Bot, NumberOfChipsError, BotBuilder, InstructionParser
+from structure_day_10_2016 import Chip, Bot, NumberOfChipsError, BotBuilder, InstructionParser, FactorySimulation
 
 
 class TestChip(unittest.TestCase):
@@ -197,7 +197,56 @@ class TestBotBuilder(unittest.TestCase):
         self.assertEqual(len(bot.chips), 0)
 
 
+class TestFactorySimulation(unittest.TestCase):
+    def test__init__(self):
+        commands = ["value 5 goes to bot 2",
+                    "bot 2 gives low to bot 1 and high to bot 0",
+                    "value 3 goes to bot 1",
+                    "bot 1 gives low to output 1 and high to bot 0",
+                    "bot 0 gives low to output 2 and high to output 0",
+                    "value 2 goes to bot 2"]
+
+        simulation = FactorySimulation(commands)
+
+        self.assertEqual(len(simulation.bots), 0)
+        self.assertEqual(len(simulation.bot_ids), 0)
+        self.assertEqual(len(simulation.bins), 0)
+        self.assertEqual(len(simulation.bin_ids), 0)
+        self.assertEqual(len(simulation.commands), 6)
+
+        sim_commands = simulation.commands
+        self.assertEqual(len(sim_commands[0]), 3)
+        self.assertEqual(len(sim_commands[1]), 6)
+        self.assertEqual(len(sim_commands[2]), 3)
+        self.assertEqual(len(sim_commands[3]), 6)
+        self.assertEqual(len(sim_commands[4]), 6)
+        self.assertEqual(len(sim_commands[5]), 3)
+
+
 class TestInstructionParser(unittest.TestCase):
+
+    def test_parse_commands(self):
+        commands = ["value 5 goes to bot 2",
+                    "bot 2 gives low to bot 1 and high to bot 0"]
+
+        parsed_commands = InstructionParser.parse_commands(commands)
+
+        self.assertEqual(len(parsed_commands), 2)
+
+        pc_1 = parsed_commands[0]
+        self.assertEqual(len(pc_1), 3)
+        self.assertEqual(pc_1[0], "assign")
+        self.assertEqual(pc_1[1], 5)
+        self.assertEqual(pc_1[2], 2)
+
+        pc_2 = parsed_commands[1]
+        self.assertEqual(len(pc_2), 6)
+        self.assertEqual(pc_2[0], "transfer")
+        self.assertEqual(pc_2[1], 2)
+        self.assertEqual(pc_2[2], "bot")
+        self.assertEqual(pc_2[3], 1)
+        self.assertEqual(pc_2[4], "bot")
+        self.assertEqual(pc_2[5], 0)
 
     def test_parse_command_value_assignment(self):
         command = "value 5 goes to bot 2"

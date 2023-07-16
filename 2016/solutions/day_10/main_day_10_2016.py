@@ -9,7 +9,7 @@ test_instructions = ["value 5 goes to bot 2",
 
 
 def main():
-    sim = FactorySimulation()
+    sim = FactorySimulation(test_instructions)
 
     print(sim)
 
