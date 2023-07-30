@@ -1,4 +1,4 @@
-from structure_day_10_2016 import FactorySimulation
+from structure_day_10_2016 import FactorySimulation, InstructionParser
 
 test_instructions = ["value 5 goes to bot 2",
                      "bot 2 gives low to bot 1 and high to bot 0",
@@ -10,6 +10,12 @@ test_instructions = ["value 5 goes to bot 2",
 
 def main():
     sim = FactorySimulation(test_instructions)
+
+    test_instructions_sim = ["value 5 goes to bot 2", "value 3 goes to bot 2"]
+    parsed_instructions_sim = InstructionParser.parse_commands(test_instructions_sim)
+
+    sim.execute_value_command(parsed_instructions_sim[0])
+    sim.execute_value_command(parsed_instructions_sim[1])
 
     print(sim)
 

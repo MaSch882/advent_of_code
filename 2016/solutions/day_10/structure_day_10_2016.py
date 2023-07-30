@@ -127,6 +127,20 @@ class FactorySimulation:
         self.bin_ids = []
         self.commands = InstructionParser.parse_commands(commands)
 
+    def execute_value_command(self, command: list[str]):
+        value_to_assign = int(command[1])
+        bot_id = int(command[2])
+
+        if bot_id in self.bot_ids:
+            # * bot with bot_id exists, receives chip.
+            bot: Bot = list(filter(lambda b: b.id == bot_id, self.bots))[0]
+            bot.receive_chip(Chip(value_to_assign))
+        else:
+            # bot with bot_id doesn't exist, creates new, registers it and updates ids.
+            bot = BotBuilder.build_bot_from_value(bot_id, value_to_assign)
+            self.bots.append(bot)
+            self.bot_ids.append(bot_id)
+
 
 class InstructionParser:
 
@@ -156,7 +170,7 @@ class InstructionParser:
         """
         if command.startswith("value"):
             return InstructionParser.parse_assignment(command)
-
+        
         if command.startswith("bot"):
             return InstructionParser.parse_transfer(command)
 
