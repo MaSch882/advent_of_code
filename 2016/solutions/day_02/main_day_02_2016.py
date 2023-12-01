@@ -1,4 +1,4 @@
-from Utils.input_processing import InputReader
+from framework.input_processing import InputReader
 from structure_day_02_2016 import ComplexKeypad
 from structure_day_02_2016 import KeypadDecrypter
 from structure_day_02_2016 import SimpleKeypad

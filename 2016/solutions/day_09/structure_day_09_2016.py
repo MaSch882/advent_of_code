@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from Utils.lists import ListUtils
-from Utils.strings import StringUtils
+from framework.lists import ListUtils
+from framework.strings import StringUtils
 
 
 @dataclass()

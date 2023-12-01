@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Utils import input_processing as ip
+from framework import input_processing as ip
 
 INTERESTING_CYLCE_NUMBERS = [20, 60, 100, 140, 180, 220]
 

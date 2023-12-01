@@ -1,6 +1,6 @@
 import unittest
 
-from Utils.errors import IllegalArgumentError
+from framework.errors import IllegalArgumentError
 from structure_day_10_2016 import Chip, Bot, NumberOfChipsError, BotBuilder, InstructionParser, FactorySimulation
 
 

@@ -1,4 +1,4 @@
-from Utils.input_processing import InputReader
+from framework.input_processing import InputReader
 from structure_day_03_2015 import Santa
 
 filename = r"..\..\input_data/input_day_03_2015.txt"

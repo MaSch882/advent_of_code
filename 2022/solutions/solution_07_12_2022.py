@@ -3,7 +3,7 @@ from typing import Any
 
 from treelib import Node, Tree
 
-from Utils import input_processing as ip
+from framework import input_processing as ip
 
 
 # Preprocessing

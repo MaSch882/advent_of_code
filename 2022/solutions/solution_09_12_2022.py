@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from Utils import input_processing as ip
+from framework import input_processing as ip
 
 
 def preprocess_input(filename: str) -> list[str]:

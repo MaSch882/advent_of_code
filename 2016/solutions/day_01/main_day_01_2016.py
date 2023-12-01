@@ -1,4 +1,4 @@
-from Utils.input_processing import InputReader
+from framework.input_processing import InputReader
 from structure_day_01_2016 import Walker
 
 filename = r"..\..\input_data/input_day_01_2016.txt"

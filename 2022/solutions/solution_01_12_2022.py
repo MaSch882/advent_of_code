@@ -1,4 +1,4 @@
-import Utils.input_processing as ip
+import framework.input_processing as ip
 
 
 def calculate_maximum_calories_in_list(filename: str) -> int:

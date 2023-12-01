@@ -1,4 +1,4 @@
-from Utils.input_processing import InputReader
+from framework.input_processing import InputReader
 from structure_day_07_2016 import IPAdress
 from structure_day_07_2016 import TLSCounter, SSLCounter
 

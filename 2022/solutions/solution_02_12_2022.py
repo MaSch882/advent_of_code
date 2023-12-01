@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import Utils.input_processing as ip
+import framework.input_processing as ip
 
 POINTS_FOR_LOSE = 0
 POINTS_FOR_DEUCE = 3

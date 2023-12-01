@@ -1,4 +1,4 @@
-import Utils.input_processing as ip
+import framework.input_processing as ip
 
 
 def read_input(filename: str) -> str:

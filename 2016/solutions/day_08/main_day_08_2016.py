@@ -1,4 +1,4 @@
-from Utils.input_processing import InputReader
+from framework.input_processing import InputReader
 from structure_day_08_2016 import CommandExecutor
 from structure_day_08_2016 import Screen
 
@@ -8,7 +8,7 @@ filename = r"..\..\input_data\input_day_08_2016.txt"
 def main():
     commands = InputReader.read_input(filename)
     screen = Screen(50, 6)
-    
+
     executor = CommandExecutor(screen, commands)
     executor.execute_commands()
 

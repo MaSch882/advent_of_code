@@ -1,4 +1,4 @@
-from Utils.input_processing import InputReader
+from framework.input_processing import InputReader
 from structure_day_06_2016 import MostFrequentErrorCorrector, LeastFrequentErrorCorrector
 
 filename = r"..\..\input_data\input_day_06_2016.txt"

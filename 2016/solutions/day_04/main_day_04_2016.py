@@ -1,4 +1,4 @@
-from Utils.input_processing import InputReader
+from framework.input_processing import InputReader
 from structure_day_04_2016 import Room
 from structure_day_04_2016 import RoomDecryptor
 from structure_day_04_2016 import RoomIDSummator

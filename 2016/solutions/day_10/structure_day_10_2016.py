@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from Utils.errors import IllegalArgumentError
+from framework.errors import IllegalArgumentError
 
 
 @dataclass()
@@ -170,7 +170,7 @@ class InstructionParser:
         """
         if command.startswith("value"):
             return InstructionParser.parse_assignment(command)
-        
+
         if command.startswith("bot"):
             return InstructionParser.parse_transfer(command)
 
