@@ -78,27 +78,29 @@ let decodeInputToCalibrationValueWithWords (input:string) =
 
 
 let processAllInputs (filepath: string)  =
-    let rows = File.ReadAllLines filepath
-    let mutable sum = 0
-    rows 
+    filepath 
+    |> File.ReadAllLines 
     // |> Array.map decodeInputToCalibrationValue
     |> Array.map decodeInputToCalibrationValueWithWords
     |> Array.sum
 
+let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
+    arguments.Length = 1 && File.Exists filepath
 
 [<EntryPoint>]
-let main argv = 
-    if argv.Length = 1 then 
-        let filePath = argv.[0]
-        if File.Exists filePath then
-            printfn "Processing %s" filePath
-            let result = processAllInputs filePath
-            
-            printfn "%i" result
+let main (argv: String array) = 
+    if argv.Length = 0 then 
+        printfn "Please specify a file!"
+        1
+    elif argv.Length > 1 then
+        printfn "More than one file given!"
+        2
+    else
+        let filepath = argv.[0]
+        if filepath |> fileIsGivenAndExists argv then 
+            printfn "Processing %s" filepath
+            printfn "%i" (filepath |> processAllInputs)
             0
         else    
             printfn "File does not exist!"
-            2    
-    else 
-        printfn "Please specify a file!"
-        1
+            2   
