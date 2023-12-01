@@ -6,6 +6,7 @@ let allowedStartChars = ["o"; "t"; "f"; "s"; "e"; "n"; "0"; "1"; "2"; "3"; "4"; 
 let allowedNumbers = ["0"; "1"; "2"; "3"; "4"; "5"; "6"; "7"; "8"; "9"]
 let numberMapping: Collections.Generic.IDictionary<string, int> = dict["one", 1; "two", 2; "three", 3; "four", 4; "five", 5; "six", 6; "seven", 7; "eight", 8; "nine", 9]
 
+// Part 1
 let decodeInputToCalibrationValue (input: string) =
     let charArray = input.ToCharArray() |> Array.filter (Char.IsNumber)
 
@@ -15,6 +16,8 @@ let decodeInputToCalibrationValue (input: string) =
     let resultAsString: string = first + last
     int(resultAsString)
 
+
+// Part 2
 let concatNextChar (substring: string) (index: int) (chars: char array) = 
     String.Concat([substring; string(chars.[index])])
 
@@ -72,10 +75,6 @@ let decodeInputToCalibrationValueWithWords (input:string) =
 
     // Baue zweistelligen Calibration Value.
     last + 10*first
-
-
-
-
 
 
 let processAllInputs (filepath: string)  =
