@@ -15,6 +15,23 @@ let decodeInputToCalibrationValue (input: string) =
     let resultAsString: string = first + last
     int(resultAsString)
 
+let concatNextChar (substring: string) (index: int) (chars: char array) = 
+    String.Concat([substring; string(chars.[index])])
+
+let substringDoesNotStartWithAllowedChar (substring: string) = 
+    substring.Length = 1 && not (List.contains substring allowedStartChars)
+
+let substringStartsWithNumber (substring: string) =
+    List.contains substring allowedNumbers
+
+let appendToFoundExpressions (foundExpressions: String list) (expression: string)  = 
+    [expression] |> List.append foundExpressions
+
+let isSubstringEmpty (substring: string) =
+    substring <> ""
+
+let isAllowedExpression (index: int) (input: string) (substring: string) =
+    substring |> isSubstringEmpty && index < input.Length
 
 let decodeInputToCalibrationValueWithWords (input:string) =
     let inputAsCharArray = input.ToCharArray()
@@ -23,23 +40,25 @@ let decodeInputToCalibrationValueWithWords (input:string) =
     let mutable substring = ""
 
     for i in 0..input.Length - 1 do
-        substring <- String.Concat([substring; string(inputAsCharArray.[i])])
+        substring <- concatNextChar substring i inputAsCharArray
 
-        if substring.Length = 1 && not (List.contains substring allowedStartChars) then
+        if substring |> substringDoesNotStartWithAllowedChar then
             substring <- ""
+        
+        if substring |> substringStartsWithNumber then
+            foundExpressions <- substring |> appendToFoundExpressions foundExpressions
         else 
-            if List.contains substring allowedNumbers then
-                foundExpressions <- [substring] |> List.append foundExpressions
-            else 
-                let mutable j: int = i+1
-                while substring <> "" && j < input.Length do
-                    substring <- String.Concat([substring; string(inputAsCharArray.[j])])
-                    if List.contains substring allowedExpressions then 
-                        foundExpressions <- [substring] |> List.append foundExpressions
-                        substring <- ""
-                    j <- j+1
+            // Iteriere durch den Rest der Zeichen und pruefe, ob was passendes dabei ist.
+            let mutable j: int = i+1
+            while substring |> isAllowedExpression j input do
+                substring <- String.Concat([substring; string(inputAsCharArray.[j])])
+                if List.contains substring allowedExpressions then 
+                    foundExpressions <- substring |> appendToFoundExpressions foundExpressions
+                    substring <- ""
+                j <- j+1
         substring <- ""
 
+    // Baue aus den gefundenen Ausdruecken Zahlenwerte.
     let mutable numbers: int list = []
     for element in foundExpressions do
         if element.Length = 1 then 
@@ -47,9 +66,11 @@ let decodeInputToCalibrationValueWithWords (input:string) =
         else 
             numbers <- [numberMapping[element]] |> List.append numbers
 
+    // Hole ersten und letzten Zahlenwert.
     let first = numbers[0]
     let last = numbers[numbers.Length-1]
 
+    // Baue zweistelligen Calibration Value.
     last + 10*first
 
 
