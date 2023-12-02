@@ -79,7 +79,26 @@ let buildAllGameRounds (filepath: string) =
 
         // GameRounds aktualisieren
         gameRounds <- List.append [gameRound] gameRounds
+    // Reihenfolge der Liste invertieren, damit sie zur urspruenglichen Reihenfolge passt.
+    gameRounds <- List.rev gameRounds
     gameRounds
+
+let sumAllIDsWhereGameIsPossible (games: GameRound list) =
+    let colorsToCheck = [12; 13; 14]
+    let mutable sumOfIDs = 0 
+
+    for game in games do 
+        let mutable isPossible = true
+        let id = game.ID + 1
+        let draws = game.Draws
+
+        for draw in draws do
+            if draw.Reds > colorsToCheck.[0] || draw.Greens > colorsToCheck.[1] || draw.Blues > colorsToCheck.[2] then 
+                isPossible <- false
+        if isPossible then
+            sumOfIDs <- sumOfIDs + id 
+    sumOfIDs
+
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) =
     arguments.Length = 1 && File.Exists filepath
@@ -98,6 +117,10 @@ let main argv =
         if filepath |> fileIsGivenAndExists argv then
             printfn "Processing %s" filepath
             let preparedInputs = filepath |> buildAllGameRounds
+            let sumIDsPossible = preparedInputs |> sumAllIDsWhereGameIsPossible
+            
+            printfn "Part 1: %i" sumIDsPossible
+            printfn "Part 2: %i" -1
             0
         else
             printfn "File does not exist!"
