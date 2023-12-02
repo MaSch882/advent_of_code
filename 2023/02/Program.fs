@@ -99,6 +99,27 @@ let sumAllIDsWhereGameIsPossible (games: GameRound list) =
             sumOfIDs <- sumOfIDs + id 
     sumOfIDs
 
+let sumAllPowersPlayingWithMinimumCubes (games: GameRound list) =
+    let mutable sumOfPowers = 0
+    
+    for game in games do
+        let mutable minReds = 0
+        let mutable minGreens = 0
+        let mutable minBlues = 0
+
+        let draws = game.Draws
+
+        for draw in draws do
+            if draw.Reds > minReds then 
+                minReds <- draw.Reds
+            if draw.Greens > minGreens then 
+                minGreens <- draw.Greens
+            if draw.Blues > minBlues then 
+                minBlues <- draw.Blues
+        
+        sumOfPowers <- sumOfPowers + minReds*minGreens*minBlues
+    sumOfPowers
+
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) =
     arguments.Length = 1 && File.Exists filepath
@@ -116,11 +137,12 @@ let main argv =
 
         if filepath |> fileIsGivenAndExists argv then
             printfn "Processing %s" filepath
-            let preparedInputs = filepath |> buildAllGameRounds
-            let sumIDsPossible = preparedInputs |> sumAllIDsWhereGameIsPossible
+            let games = filepath |> buildAllGameRounds
+            let sumIDsPossible = games |> sumAllIDsWhereGameIsPossible
+            let sumOfPowers = games |> sumAllPowersPlayingWithMinimumCubes
             
             printfn "Part 1: %i" sumIDsPossible
-            printfn "Part 2: %i" -1
+            printfn "Part 2: %i" sumOfPowers
             0
         else
             printfn "File does not exist!"
