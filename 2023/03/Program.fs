@@ -98,15 +98,183 @@ let sumAllPartNumbers (matrix: char array list) =
                 isRelevant <- false
     sumOfPartNumbers
 
+let countAdjacentNumbers (i: int) (j: int) (matrix: char array list) = 
+    let mutable adjacentNumbers = 0
+
+    let upLeft = string matrix.[i-1].[j-1]
+    let up = string matrix.[i-1].[j]
+    let upRight = string matrix.[i-1].[j+1]
+
+    let belowLeft = string matrix.[i+1].[j-1]
+    let below = string matrix.[i+1].[j]
+    let belowRight = string matrix.[i+1].[j+1]
+    
+    let left = string matrix.[i].[j-1]
+    let right = string matrix.[i].[j+1]
+
+    // Rechts und links vom *
+    if numbers |> List.contains left then
+        adjacentNumbers <- adjacentNumbers + 1
+    if numbers |> List.contains right then 
+        adjacentNumbers <- adjacentNumbers + 1
+
+    // Oben vom *
+    if numbers |> List.contains up then
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains upLeft && numbers |> List.contains up then 
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains upRight && numbers |> List.contains up then 
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains upRight && numbers |> List.contains upLeft && not (numbers |> List.contains up) then 
+        adjacentNumbers <- adjacentNumbers + 2
+    elif numbers |> List.contains upLeft && not (numbers |> List.contains up) && not (numbers |> List.contains upRight) then
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains upRight && not (numbers |> List.contains up) && not (numbers |> List.contains upLeft) then
+        adjacentNumbers <- adjacentNumbers + 1
+    
+
+    // Unten vom *
+    if numbers |> List.contains below then
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains belowLeft && numbers |> List.contains below then 
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains belowRight && numbers |> List.contains below then 
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains belowRight && numbers |> List.contains belowLeft && not (numbers |> List.contains below) then 
+        adjacentNumbers <- adjacentNumbers + 2
+    elif numbers |> List.contains belowLeft && not (numbers |> List.contains below) && not (numbers |> List.contains belowRight) then
+        adjacentNumbers <- adjacentNumbers + 1
+    elif numbers |> List.contains belowRight && not (numbers |> List.contains below) && not (numbers |> List.contains belowLeft) then
+        adjacentNumbers <- adjacentNumbers + 1
+
+    adjacentNumbers
+
 let isGear (i: int) (j: int) (matrix: char array list) =
     if string matrix.[i].[j] <> gear then 
         false 
     else 
-        false
+        if (countAdjacentNumbers i j matrix) = 2 then
+            true 
+        else 
+            false
 
+
+let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) = 
+    let mutable adjacentNumbers = []
+
+    let upLeft = string matrix.[i-1].[j-1]
+    let up = string matrix.[i-1].[j]
+    let upRight = string matrix.[i-1].[j+1]
+
+    let belowLeft = string matrix.[i+1].[j-1]
+    let below = string matrix.[i+1].[j]
+    let belowRight = string matrix.[i+1].[j+1]
+    
+    let left = string matrix.[i].[j-1]
+    let right = string matrix.[i].[j+1]
+
+    let current = string matrix.[i].[j]
+
+    let mutable currentNumber = ""
+
+    // Links oder rechts? 
+    if numbers |> List.contains left then 
+        let mutable current_j = j - 1
+        while current_j >= 0 && numbers |> List.contains (string matrix.[i].[current_j]) do 
+            currentNumber <- String.Concat([currentNumber; string matrix.[i].[current_j]])
+            current_j <- current_j - 1
+        adjacentNumbers <- adjacentNumbers |> List.append [currentNumber |> Seq.rev |> System.String.Concat |> int]
+        currentNumber <- ""
+    if numbers |> List.contains right then 
+        let mutable current_j = j + 1
+        while current_j <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i].[current_j]) do 
+            currentNumber <- String.Concat([currentNumber; string matrix.[i].[current_j]])
+            current_j <- current_j + 1
+        adjacentNumbers <- adjacentNumbers |> List.append [currentNumber |> System.String.Concat |> int]
+        currentNumber <- ""
+
+    // Oben 
+    // Idee: 
+    // Positioniere dich auf das Feld links ueber dem Gear.
+    // Laufe solange nach links, bis Du entweder am Rand bist oder keine Zahl mehr findest.
+    // Laufe bis auf das Feld oben rechts vom Gear und schreibe mit.
+    // Laufe solange nach recht, bis Du entweder am Rand bist oder keine Zahl mehr findest und schreibe mit. 
+    // Extrahiere aus dem Mitschrieb alle Zahlen. 
+    // Fuege diese Zahlen der List adjacentNumbers hinzu.
+
+    // Den String ueber dem Gear extrahieren. 
+    let mutable markerJ = j-1
+    while markerJ >= 0 && numbers |> List.contains (string matrix.[i-1].[markerJ]) do
+        markerJ <- markerJ - 1 
+    let mutable stringAboveGear = ""
+    markerJ <- markerJ + 1
+    while markerJ <= j+1 do 
+        stringAboveGear <- String.Concat([stringAboveGear; string matrix.[i-1].[markerJ]])
+        markerJ <- markerJ + 1
+    if numbers |> List.contains (string matrix.[i-1].[markerJ - 1]) then 
+        while markerJ <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i-1].[markerJ]) do
+            stringAboveGear <- String.Concat([stringAboveGear; string matrix.[i-1].[markerJ]])
+            markerJ <- markerJ + 1
+    else 
+        ()
+    
+    // Die Zahlen aus dem stringAboveGear extrahieren.
+    let charsInStringAbove = stringAboveGear.ToCharArray()
+    
+    let mutable number = ""
+
+    for char in charsInStringAbove do
+        if Char.IsNumber char then 
+            number <- String.Concat([number; string char])
+        else
+            if number <> "" then  
+                adjacentNumbers <- adjacentNumbers |> List.append [int number]
+            number <- ""
+    if number <> "" then 
+        adjacentNumbers <- adjacentNumbers |> List.append [int number]
+
+    // Unten 
+    // Gleiche Idee, nur unter dem Gear.
+
+    // Den String unter dem Gear extrahieren. 
+    let mutable markerJ = j-1
+    while markerJ > 0 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
+        markerJ <- markerJ - 1 
+    let mutable stringBelowGear = ""
+    markerJ <- markerJ + 1
+    while markerJ <= j+1 do 
+        stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
+        markerJ <- markerJ + 1
+    if numbers |> List.contains (string matrix.[i-1].[markerJ - 1]) then 
+        while markerJ <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
+            stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
+            markerJ <- markerJ + 1
+    else 
+        ()
+    
+    // Die Zahlen aus dem stringBelowGear extrahieren.
+    let charsInStringBelow = stringBelowGear.ToCharArray()
+    
+    let mutable number = ""
+
+    for char in charsInStringBelow do
+        if Char.IsNumber char then 
+            number <- String.Concat([number; string char])
+        else
+            if number <> "" then  
+                adjacentNumbers <- adjacentNumbers |> List.append [int number]
+            number <- ""
+    if number <> "" then 
+        adjacentNumbers <- adjacentNumbers |> List.append [int number]
+
+    for number in adjacentNumbers do
+        printfn "%i" number
+
+    adjacentNumbers
 
 let calculateGearRatio (matrix: char array list) (i: int) (j: int) = 
-    0
+    let adjacentNumbers = matrix |> extractAdjacentNumbers i j 
+    adjacentNumbers.[0] * adjacentNumbers.[1]
 
 let sumAllGearRatios (matrix: char array list) =
     let mutable sumOfGearRatios = 0
@@ -114,8 +282,9 @@ let sumAllGearRatios (matrix: char array list) =
     for i in 0..matrix.Length - 1 do 
         for j in 0..matrix.[0].Length - 1 do 
             if matrix |> isGear i j then 
-                printfn "Gear found at (%i, %i)" i j
+                // printfn "Gear found at (%i, %i)" (i+1) (j+1)
                 let gearRatio = calculateGearRatio matrix i j
+                printfn "%i" gearRatio
                 sumOfGearRatios <- sumOfGearRatios + gearRatio
             else 
                 ()
