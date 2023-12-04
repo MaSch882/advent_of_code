@@ -204,14 +204,14 @@ let extractStringAboveGear (i: int) (j: int) (matrix: char array list) =
 
 let extractStringBelowGear (i: int) (j: int) (matrix: char array list) = 
     let mutable markerJ = j-1
-    while markerJ > 0 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
+    while markerJ >= 0 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
         markerJ <- markerJ - 1 
     let mutable stringBelowGear = ""
     markerJ <- markerJ + 1
     while markerJ <= j+1 do 
         stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
         markerJ <- markerJ + 1
-    if numbers |> List.contains (string matrix.[i-1].[markerJ - 1]) then 
+    if numbers |> List.contains (string matrix.[i+1].[markerJ - 1]) then 
         while markerJ <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
             stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
             markerJ <- markerJ + 1
@@ -246,9 +246,9 @@ let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) =
     let mutable currentNumber = ""
 
     // Links
-    adjacentNumbers <- adjacentNumbers |> List.append (matrix |> extractNumbersToTheLeft left i j currentNumber adjacentNumbers)
+    adjacentNumbers <- matrix |> extractNumbersToTheLeft left i j currentNumber adjacentNumbers
     // Rechts
-    adjacentNumbers <- adjacentNumbers |> List.append (matrix |> extractNumbersToTheRight right i j currentNumber adjacentNumbers)
+    adjacentNumbers <- matrix |> extractNumbersToTheRight right i j currentNumber adjacentNumbers
 
     // Oben 
     // Idee: 
@@ -262,7 +262,7 @@ let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) =
     // Den String ueber dem Gear extrahieren. 
     let stringAboveGear = matrix |> extractStringAboveGear i j
     // Die Zahlen aus dem stringAboveGear extrahieren.
-    adjacentNumbers <- adjacentNumbers |> List.append (extractNumbersFromString stringAboveGear adjacentNumbers)
+    adjacentNumbers <- adjacentNumbers |> (extractNumbersFromString stringAboveGear)
     
 
     // Unten 
@@ -271,30 +271,32 @@ let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) =
     // Den String unter dem Gear extrahieren. 
     let stringBelowGear = matrix |> extractStringBelowGear i j
     // Die Zahlen aus dem stringBelowGear extrahieren.
-    adjacentNumbers <- adjacentNumbers |> List.append (extractNumbersFromString stringBelowGear adjacentNumbers)
-
-    for number in adjacentNumbers do
-        printfn "%i" number
+    adjacentNumbers <- adjacentNumbers |> (extractNumbersFromString stringBelowGear)
 
     adjacentNumbers
 
-let calculateGearRatio (matrix: char array list) (i: int) (j: int) = 
-    let adjacentNumbers = matrix |> extractAdjacentNumbers i j 
+let calculateGearRatio (i: int) (j: int)  (matrix: char array list)= 
+    let adjacentNumbers = matrix |> extractAdjacentNumbers i j
+    
+    for number in adjacentNumbers do
+        printfn "%i" number
     adjacentNumbers.[0] * adjacentNumbers.[1]
 
 let sumAllGearRatios (matrix: char array list) =
     let mutable sumOfGearRatios = 0
-    
+    let mutable numberOfGears = 0    
+
     for i in 0..matrix.Length - 1 do 
         for j in 0..matrix.[0].Length - 1 do 
             if matrix |> isGear i j then 
-                // printfn "Gear found at (%i, %i)" (i+1) (j+1)
-                let gearRatio = calculateGearRatio matrix i j
-                printfn "%i" gearRatio
+                let gearRatio = matrix |> calculateGearRatio i j
+                printfn "Gear found at (%i, %i); %i" (i+1) (j+1) gearRatio
+                numberOfGears <- numberOfGears + 1
                 sumOfGearRatios <- sumOfGearRatios + gearRatio
             else 
                 ()
 
+    printfn "number of gears: %i" numberOfGears
     sumOfGearRatios
 
 
@@ -316,7 +318,7 @@ let main argv =
             let part1 = filepath |> buildMatrixFromInput |> sumAllPartNumbers            
             let part2 = filepath |> buildMatrixFromInput |> sumAllGearRatios
             printfn "Part 1: %i" part1
-            printfn "Part 2: %i" part2
+            printfn "Part 2: %i" part2 // 67779080
             0
         else    
             printfn "File does not exist!"
