@@ -202,6 +202,24 @@ let extractStringAboveGear (i: int) (j: int) (matrix: char array list) =
         ()
     stringAboveGear
 
+let extractNumbersFromString (stringAboveGear: string) (adjacentNumbers: int list) = 
+    let mutable adjacents = adjacentNumbers
+
+    let charsInStringAbove = stringAboveGear.ToCharArray()
+    
+    let mutable number = ""
+
+    for char in charsInStringAbove do
+        if Char.IsNumber char then 
+            number <- String.Concat([number; string char])
+        else
+            if number <> "" then  
+                adjacents <- adjacents |> List.append [int number]
+            number <- ""
+    if number <> "" then 
+        adjacents <- adjacents |> List.append [int number]
+    adjacents
+
 let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) = 
     let mutable adjacentNumbers = []
     
@@ -227,19 +245,8 @@ let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) =
     // Den String ueber dem Gear extrahieren. 
     let stringAboveGear = matrix |> extractStringAboveGear i j
     // Die Zahlen aus dem stringAboveGear extrahieren.
-    let charsInStringAbove = stringAboveGear.ToCharArray()
+    adjacentNumbers <- adjacentNumbers |> List.append (extractNumbersFromString stringAboveGear adjacentNumbers)
     
-    let mutable number = ""
-
-    for char in charsInStringAbove do
-        if Char.IsNumber char then 
-            number <- String.Concat([number; string char])
-        else
-            if number <> "" then  
-                adjacentNumbers <- adjacentNumbers |> List.append [int number]
-            number <- ""
-    if number <> "" then 
-        adjacentNumbers <- adjacentNumbers |> List.append [int number]
 
     // Unten 
     // Gleiche Idee, nur unter dem Gear.
