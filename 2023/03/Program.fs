@@ -202,6 +202,23 @@ let extractStringAboveGear (i: int) (j: int) (matrix: char array list) =
         ()
     stringAboveGear
 
+let extractStringBelowGear (i: int) (j: int) (matrix: char array list) = 
+    let mutable markerJ = j-1
+    while markerJ > 0 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
+        markerJ <- markerJ - 1 
+    let mutable stringBelowGear = ""
+    markerJ <- markerJ + 1
+    while markerJ <= j+1 do 
+        stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
+        markerJ <- markerJ + 1
+    if numbers |> List.contains (string matrix.[i-1].[markerJ - 1]) then 
+        while markerJ <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
+            stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
+            markerJ <- markerJ + 1
+    else 
+        ()
+    stringBelowGear
+
 let extractNumbersFromString (stringAboveGear: string) (adjacentNumbers: int list) = 
     let mutable adjacents = adjacentNumbers
 
@@ -252,21 +269,7 @@ let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) =
     // Gleiche Idee, nur unter dem Gear.
 
     // Den String unter dem Gear extrahieren. 
-    let mutable markerJ = j-1
-    while markerJ > 0 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
-        markerJ <- markerJ - 1 
-    let mutable stringBelowGear = ""
-    markerJ <- markerJ + 1
-    while markerJ <= j+1 do 
-        stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
-        markerJ <- markerJ + 1
-    if numbers |> List.contains (string matrix.[i-1].[markerJ - 1]) then 
-        while markerJ <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i+1].[markerJ]) do
-            stringBelowGear <- String.Concat([stringBelowGear; string matrix.[i+1].[markerJ]])
-            markerJ <- markerJ + 1
-    else 
-        ()
-    
+    let stringBelowGear = matrix |> extractStringBelowGear i j
     // Die Zahlen aus dem stringBelowGear extrahieren.
     let charsInStringBelow = stringBelowGear.ToCharArray()
     
