@@ -271,19 +271,7 @@ let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) =
     // Den String unter dem Gear extrahieren. 
     let stringBelowGear = matrix |> extractStringBelowGear i j
     // Die Zahlen aus dem stringBelowGear extrahieren.
-    let charsInStringBelow = stringBelowGear.ToCharArray()
-    
-    let mutable number = ""
-
-    for char in charsInStringBelow do
-        if Char.IsNumber char then 
-            number <- String.Concat([number; string char])
-        else
-            if number <> "" then  
-                adjacentNumbers <- adjacentNumbers |> List.append [int number]
-            number <- ""
-    if number <> "" then 
-        adjacentNumbers <- adjacentNumbers |> List.append [int number]
+    adjacentNumbers <- adjacentNumbers |> List.append (extractNumbersFromString stringBelowGear adjacentNumbers)
 
     for number in adjacentNumbers do
         printfn "%i" number
