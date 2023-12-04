@@ -1,6 +1,74 @@
 ﻿open System 
 open System.IO
 
+type Card =
+    {
+        ID: int
+        WinningNumbers: int list
+        MatchNumbers: int list
+    }
+
+module Card =
+    let buildFromData (id: int) (win: list<int>) (matching: list<int>) =
+        {
+            ID = id
+            WinningNumbers = win
+            MatchNumbers = matching
+        }
+    
+    let toString (card: Card) =
+        printfn "ID: %i" card.ID
+        for win in card.WinningNumbers do
+            printf "%i " win 
+        printfn ""
+        for matching in card.MatchNumbers do 
+            printf "%i " matching
+        printfn ""
+        printfn "-----------------------"
+
+
+let buildCards (strings: string array) : list<Card> =
+    let mutable cards: list<Card> = []
+
+    for s in strings do 
+        let stringSplittedAtId = s.Split(":")
+        let id = int (stringSplittedAtId.[0].Split(" ").[1])
+
+        let stringSplittedAtCard = stringSplittedAtId.[1].Split("|") |> Array.map (fun s -> s.Trim())
+
+        let winningCards = 
+            stringSplittedAtCard.[0].Split(" ") 
+            |> Array.filter (fun s -> s <> "") 
+            |> Array.map int
+            |> Array.toList 
+
+        let test = stringSplittedAtCard.[1].Split(" ") |> Array.filter (fun s -> s <> "") |> Array.map int |> Array.toList
+
+        let matchCards = 
+            stringSplittedAtCard.[1].Split(" ")  
+            |> Array.filter (fun s -> s <> "") 
+            |> Array.map int  
+            |> Array.toList
+
+        let card = Card.buildFromData  id winningCards matchCards
+        cards <- cards |> List.append [card]
+    cards
+
+let determinePoints (cards: Card list) = 
+    let mutable totalPoints = 0
+
+    for card in cards do 
+        let mutable hits = 0   
+        let winningNumbers = card.WinningNumbers
+        let matchingNumbers = card.MatchNumbers
+
+        for number in matchingNumbers do
+            if List.contains number winningNumbers then
+                hits <- hits + 1
+        let points = pown 2 (hits - 1)
+        totalPoints <- totalPoints + points
+    totalPoints       
+
 let fileIsGivenAndExists (arguments: String array) (filepath: string) =
     arguments.Length = 1 && File.Exists filepath
 
@@ -17,8 +85,10 @@ let main argv =
 
         if filepath |> fileIsGivenAndExists argv then
             printfn "Processing %s" filepath
+
+            let part1 = filepath |> File.ReadAllLines |> buildCards |> determinePoints
                         
-            printfn "Part 1: %i" 0
+            printfn "Part 1: %i" part1
             printfn "Part 2: %i" 0
             0
         else
