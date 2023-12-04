@@ -172,6 +172,19 @@ let extractNumbersToTheLeft (left: string) (i: int) (j: int) (currentNumber: str
         current <- ""
     adjacents
 
+let extractNumbersToTheRight (right: string) (i: int) (j: int) (currentNumber: string) (adjacentNumbers: int list) (matrix: char array list) = 
+    let mutable current = currentNumber
+    let mutable adjacents = adjacentNumbers
+
+    if numbers |> List.contains right then 
+        let mutable current_j = j + 1
+        while current_j <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i].[current_j]) do 
+            current <- String.Concat([current; string matrix.[i].[current_j]])
+            current_j <- current_j + 1
+        adjacents <- adjacents |> List.append [current |> System.String.Concat |> int]
+        current <- ""
+    adjacents
+
 let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) = 
     let mutable adjacentNumbers = []
     
@@ -182,15 +195,8 @@ let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) =
 
     // Links
     adjacentNumbers <- adjacentNumbers |> List.append (matrix |> extractNumbersToTheLeft left i j currentNumber adjacentNumbers)
-    
     // Rechts
-    if numbers |> List.contains right then 
-        let mutable current_j = j + 1
-        while current_j <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i].[current_j]) do 
-            currentNumber <- String.Concat([currentNumber; string matrix.[i].[current_j]])
-            current_j <- current_j + 1
-        adjacentNumbers <- adjacentNumbers |> List.append [currentNumber |> System.String.Concat |> int]
-        currentNumber <- ""
+    adjacentNumbers <- adjacentNumbers |> List.append (matrix |> extractNumbersToTheRight right i j currentNumber adjacentNumbers)
 
     // Oben 
     // Idee: 
