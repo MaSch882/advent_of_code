@@ -318,7 +318,7 @@ let main argv =
             let part1 = filepath |> buildMatrixFromInput |> sumAllPartNumbers            
             let part2 = filepath |> buildMatrixFromInput |> sumAllGearRatios
             printfn "Part 1: %i" part1
-            printfn "Part 2: %i" part2 // 67779080
+            printfn "Part 2: %i" part2 
             0
         else    
             printfn "File does not exist!"
