@@ -159,32 +159,31 @@ let isGear (i: int) (j: int) (matrix: char array list) =
             false
 
 
+let extractNumbersToTheLeft (left: string) (i: int) (j: int) (currentNumber: string) (adjacentNumbers: int list) (matrix: char array list) = 
+    let mutable current = currentNumber
+    let mutable adjacents = adjacentNumbers
+
+    if numbers |> List.contains left then 
+        let mutable current_j = j - 1
+        while current_j >= 0 && numbers |> List.contains (string matrix.[i].[current_j]) do 
+            current <- String.Concat([current; string matrix.[i].[current_j]])
+            current_j <- current_j - 1
+        adjacents <- adjacentNumbers |> List.append [current |> Seq.rev |> System.String.Concat |> int]
+        current <- ""
+    adjacents
+
 let extractAdjacentNumbers (i: int) (j: int) (matrix: char array list) = 
     let mutable adjacentNumbers = []
-
-    let upLeft = string matrix.[i-1].[j-1]
-    let up = string matrix.[i-1].[j]
-    let upRight = string matrix.[i-1].[j+1]
-
-    let belowLeft = string matrix.[i+1].[j-1]
-    let below = string matrix.[i+1].[j]
-    let belowRight = string matrix.[i+1].[j+1]
     
     let left = string matrix.[i].[j-1]
     let right = string matrix.[i].[j+1]
 
-    let current = string matrix.[i].[j]
-
     let mutable currentNumber = ""
 
-    // Links oder rechts? 
-    if numbers |> List.contains left then 
-        let mutable current_j = j - 1
-        while current_j >= 0 && numbers |> List.contains (string matrix.[i].[current_j]) do 
-            currentNumber <- String.Concat([currentNumber; string matrix.[i].[current_j]])
-            current_j <- current_j - 1
-        adjacentNumbers <- adjacentNumbers |> List.append [currentNumber |> Seq.rev |> System.String.Concat |> int]
-        currentNumber <- ""
+    // Links
+    adjacentNumbers <- adjacentNumbers |> List.append (matrix |> extractNumbersToTheLeft left i j currentNumber adjacentNumbers)
+    
+    // Rechts
     if numbers |> List.contains right then 
         let mutable current_j = j + 1
         while current_j <= matrix.[0].Length - 1 && numbers |> List.contains (string matrix.[i].[current_j]) do 
