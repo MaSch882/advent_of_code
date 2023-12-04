@@ -59,16 +59,45 @@ let isRelevantNumber (i: int) ( j: int) (matrix: char array list)  =
 
 let sumAllPartNumbers (matrix: char array list) = 
     let mutable sumOfPartNumbers = 0
-    let isRelevant = false
 
     for i in 0..matrix.Length - 1 do
         let mutable currentNumber = ""
+        let mutable isRelevant = false
+
         for j in 0..matrix.[0].Length - 1 do
             let currentChar = string(matrix.[i].[j])
-            printfn "char = %s, i = %i, j = %i, relevant = %b" currentChar i j (matrix |> isRelevantNumber i j)
-            // if List.contains currentChar numbers then
-            //     currentNumber <- String.Concat([currentNumber, string(currentChar)])
+            // printfn "char = %s, i = %i, j = %i, relevant = %b" currentChar i j (matrix |> isRelevantNumber i j)
+            
+            let isCurrentCharANumber = List.contains currentChar numbers
 
+            // Ist currentChar eine Zahl? Dann an currentNumber appenden.
+            if isCurrentCharANumber then
+                currentNumber <- String.Concat([currentNumber; currentChar])
+            
+            if isCurrentCharANumber && matrix |> isRelevantNumber i j && not (isRelevant) then 
+                isRelevant <- true
+
+            // Ist die Zahl zu Ende?
+            try 
+                // Zahl zu Ende
+                if not (List.contains (string(matrix.[i].[j+1])) numbers) then 
+                    // Falls die Zahl relevant ist, summieren wir.
+                    if isRelevant then
+                        sumOfPartNumbers <- sumOfPartNumbers + int(currentNumber)
+                        currentNumber <- ""
+                        isRelevant <- false
+                    else 
+                        currentNumber <- ""
+                        isRelevant <- false
+            with 
+                _ -> ()
+            
+            // Sind wir am rechten Rand der Matrix und unser letztes Zeichen ist eine Ziffer?
+            if j = matrix.[0].Length - 1 && List.contains currentChar numbers && isRelevant then
+                sumOfPartNumbers <- sumOfPartNumbers + int(currentNumber)
+                currentNumber <- ""
+                isRelevant <- false
+    sumOfPartNumbers
                 
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
@@ -86,8 +115,8 @@ let main argv =
         let filepath = argv.[0]
         if filepath |> fileIsGivenAndExists argv then 
             printfn "Processing %s" filepath
-            let matrix = filepath |> buildMatrixFromInput 
-            let sumOfAllPartNumbers = matrix |> sumAllPartNumbers
+            let part1 = filepath |> buildMatrixFromInput |> sumAllPartNumbers            
+            printfn "Part 1: %i" part1
             0
         else    
             printfn "File does not exist!"
