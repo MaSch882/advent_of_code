@@ -1,9 +1,25 @@
 ﻿open System 
 open System.IO
 
-type Almanac = 
+type SimpleAlmanac = 
     {
         Seeds: list<Int64>
+        SeedToSoilMap: list<list<Int64>>
+        SoilToFertilizerMap: list<list<Int64>>
+        FertilizerToWaterMap: list<list<Int64>>
+        WaterToLightMap: list<list<Int64>>
+        LightToTemperatureMap: list<list<Int64>>
+        TemperatureToHumidityMap: list<list<Int64>>
+        HumidityToLocationMap: list<list<Int64>>
+    }
+
+type BigAlmanac = 
+    {
+        LowerSeedBoundA: int64
+        SeedRangeA: int64        
+        LowerSeedBoundB: int64
+        SeedRangeB: int64
+
         SeedToSoilMap: list<list<Int64>>
         SoilToFertilizerMap: list<list<Int64>>
         FertilizerToWaterMap: list<list<Int64>>
@@ -20,7 +36,7 @@ type Mapper =
         Offset: Int64
     }
 
-module Almanac =
+module SimpleAlmanac =
     let fromData (seeds: list<Int64>) (seedSoil: list<list<Int64>>) (soilFert: list<list<Int64>>) (fertWater: list<list<Int64>>) (waterLight: list<list<Int64>>) (lightTemp: list<list<Int64>>) (tempHum: list<list<Int64>>) (humLoc: list<list<Int64>>)=
         {
             Seeds = seeds
@@ -32,7 +48,25 @@ module Almanac =
             TemperatureToHumidityMap = tempHum
             HumidityToLocationMap = humLoc
         }
-        
+
+module BigAlmanac =
+
+    let fromData (lowerBoundA: int64) (rangeA: int64) (lowerBoundB: int64) (rangeB: int64) (seedSoil: list<list<Int64>>) (soilFert: list<list<Int64>>) (fertWater: list<list<Int64>>) (waterLight: list<list<Int64>>) (lightTemp: list<list<Int64>>) (tempHum: list<list<Int64>>) (humLoc: list<list<Int64>>): BigAlmanac = 
+        {
+            LowerSeedBoundA = lowerBoundA
+            SeedRangeA = rangeA
+            LowerSeedBoundB = lowerBoundB
+            SeedRangeB = rangeB
+
+            SeedToSoilMap = seedSoil
+            SoilToFertilizerMap = soilFert
+            FertilizerToWaterMap = fertWater
+            WaterToLightMap = waterLight
+            LightToTemperatureMap = lightTemp
+            TemperatureToHumidityMap = tempHum
+            HumidityToLocationMap = humLoc
+        }
+
 module Mapper = 
 
     let fromData (src: Int64) (rangeWidth: Int64) (offset: Int64)= 
@@ -73,7 +107,7 @@ let buildAlmanacFromInput (filepath: string) =
     let temperatureToHumidity = splitInputMaps |> buildListOfIntegers 6
     let humidityToLocation = splitInputMaps |> buildListOfIntegers 7
     
-    let almanac = Almanac.fromData seeds seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
+    let almanac = SimpleAlmanac.fromData seeds seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
     almanac
 
 let buildBigAlmanacFromInput (filepath: string) = 
@@ -92,7 +126,9 @@ let buildBigAlmanacFromInput (filepath: string) =
 
     let seedRanges = splitInputMaps.[0].[0].Split(":").[1].Trim().Split(" ") |> Array.toList |> List.map int64
     let lowerBound1 = seedRanges.[0]
+    let range1 = seedRanges.[1]
     let lowerBound2 = seedRanges.[2]
+    let range2 = seedRanges.[3]
 
     let seeds = List.append [for i: int64 in 0L..seedRanges.[1] - 1L do lowerBound1 + i] [for i: int64 in 0L..seedRanges.[3] - 1L do lowerBound2 + i]
     
@@ -104,7 +140,7 @@ let buildBigAlmanacFromInput (filepath: string) =
     let temperatureToHumidity = splitInputMaps |> buildListOfIntegers 6
     let humidityToLocation = splitInputMaps |> buildListOfIntegers 7
     
-    let almanac = Almanac.fromData seeds seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
+    let almanac = BigAlmanac.fromData  lowerBound1 range1 lowerBound2 range2 seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
     almanac
 
 let buildMapperFromMapLists (mapList: list<list<Int64>>) = 
@@ -130,7 +166,7 @@ let mapAllFromMapList (mapperList: list<Mapper>) (listToMap: list<Int64>) =
     mappedSeeds <- mappedSeeds |> List.rev
     mappedSeeds
 
-let calculateLowestLocationNumber (almanac: Almanac) =
+let calculateLowestLocationNumber (almanac: SimpleAlmanac) =
     let seeds = almanac.Seeds
     
     let seedToSoilMapper= almanac.SeedToSoilMap |> buildMapperFromMapLists
@@ -151,6 +187,54 @@ let calculateLowestLocationNumber (almanac: Almanac) =
         |> mapAllFromMapList humidityToLocationMapper
         |> List.min
 
+let calculateLowestLocationNumberBigAlmanac (almanac: BigAlmanac) = 
+    let seedToSoilMapper= almanac.SeedToSoilMap |> buildMapperFromMapLists
+    let soilToFertilizerMapper = almanac.SoilToFertilizerMap |> buildMapperFromMapLists
+    let fertilizerToWaterMapper = almanac.FertilizerToWaterMap |> buildMapperFromMapLists
+    let waterToLightMapper = almanac.WaterToLightMap |> buildMapperFromMapLists
+    let lightToTemperatureMapper = almanac.LightToTemperatureMap |> buildMapperFromMapLists
+    let temperatureToHumidityMapper = almanac.TemperatureToHumidityMap |> buildMapperFromMapLists
+    let humidityToLocationMapper = almanac.HumidityToLocationMap |> buildMapperFromMapLists
+
+    let lowerSeedBoundA = almanac.LowerSeedBoundA
+    let lowerSeedBoundB = almanac.LowerSeedBoundB
+    let seedRangeA = almanac.SeedRangeA
+    let seedRangeB = almanac.SeedRangeB
+
+    let mutable currentMinimumLocation: int64 = Int64.MaxValue
+
+    for i: int64 in 0L..seedRangeA do
+        let seed = lowerSeedBoundA + i
+        let location = 
+            [seed] 
+            |> mapAllFromMapList seedToSoilMapper 
+            |> mapAllFromMapList soilToFertilizerMapper
+            |> mapAllFromMapList fertilizerToWaterMapper
+            |> mapAllFromMapList waterToLightMapper
+            |> mapAllFromMapList lightToTemperatureMapper
+            |> mapAllFromMapList temperatureToHumidityMapper
+            |> mapAllFromMapList humidityToLocationMapper
+            |> List.sum
+        if location < currentMinimumLocation then
+            currentMinimumLocation <- location
+
+    for i: int64 in 0L..seedRangeB do
+        let seed = lowerSeedBoundB + i
+        let location = 
+            [seed] 
+            |> mapAllFromMapList seedToSoilMapper 
+            |> mapAllFromMapList soilToFertilizerMapper
+            |> mapAllFromMapList fertilizerToWaterMapper
+            |> mapAllFromMapList waterToLightMapper
+            |> mapAllFromMapList lightToTemperatureMapper
+            |> mapAllFromMapList temperatureToHumidityMapper
+            |> mapAllFromMapList humidityToLocationMapper
+            |> List.sum
+        if location < currentMinimumLocation then
+            currentMinimumLocation <- location
+
+    currentMinimumLocation
+
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
     arguments.Length = 1 && File.Exists filepath
 
@@ -168,7 +252,7 @@ let main (argv: String array) =
             printfn "Processing %s" filepath
 
             let part1 = filepath |> buildAlmanacFromInput |> calculateLowestLocationNumber
-            let part2 = filepath |> buildBigAlmanacFromInput |> calculateLowestLocationNumber
+            let part2 = filepath |> buildBigAlmanacFromInput |> calculateLowestLocationNumberBigAlmanac
             
             printfn "Part 1: %i" part1
             printfn "Part 2: %i" part2
