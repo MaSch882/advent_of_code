@@ -1,6 +1,31 @@
 ﻿open System 
 open System.IO
 
+type Almanac = 
+    {
+        Seeds: list<int>
+        SeedToSoilMap: list<list<int>>
+        SoilToFertilizerMap: list<list<int>>
+        FertilizerToWaterMap: list<list<int>>
+        WaterToLightMap: list<list<int>>
+        LightToTemperatureMap: list<list<int>>
+        TemperatureToHumidityMap: list<list<int>>
+        HumidityToLocationMap: list<list<int>>
+    }
+
+module Almanac =
+    let fromData (seeds: list<int>) (seedSoil: list<list<int>>) (soilFert: list<list<int>>) (fertWater: list<list<int>>) (waterLight: list<list<int>>) (lightTemp: list<list<int>>) (tempHum: list<list<int>>) (humLoc: list<list<int>>)=
+        {
+            Seeds = seeds
+            SeedToSoilMap = seedSoil
+            SoilToFertilizerMap = soilFert
+            FertilizerToWaterMap = fertWater
+            WaterToLightMap = waterLight
+            LightToTemperatureMap = lightTemp
+            TemperatureToHumidityMap = tempHum
+            HumidityToLocationMap = humLoc
+        }
+
 let calculateLowestLocationOfSeeds (filepath: string) = 
     let input = filepath |> File.ReadAllLines
 
@@ -14,8 +39,8 @@ let calculateLowestLocationOfSeeds (filepath: string) =
             splitInputMaps <- splitInputMaps |> List.append [currentBlock |> List.rev]
             currentBlock <- []
     splitInputMaps <- splitInputMaps |> List.rev
-    
-    
+
+    let seeds = splitInputMaps.[0].[0].Split(":").[1].Trim().Split(" ") |> Array.toList |> List.map int
 
 
     for list in splitInputMaps do
