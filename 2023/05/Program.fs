@@ -75,7 +75,37 @@ let buildAlmanacFromInput (filepath: string) =
     
     let almanac = Almanac.fromData seeds seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
     almanac
+
+let buildBigAlmanacFromInput (filepath: string) = 
+    let input = filepath |> File.ReadAllLines
+
+    let mutable splitInputMaps = []
+
+    let mutable currentBlock = []
+    for line in input do         
+        if line <> "" && line <> "END" then 
+            currentBlock <- currentBlock |> List.append [line]
+        else 
+            splitInputMaps <- splitInputMaps |> List.append [currentBlock |> List.rev]
+            currentBlock <- []
+    splitInputMaps <- splitInputMaps |> List.rev
+
+    let seedRanges = splitInputMaps.[0].[0].Split(":").[1].Trim().Split(" ") |> Array.toList |> List.map int64
+    let lowerBound1 = seedRanges.[0]
+    let lowerBound2 = seedRanges.[2]
+
+    let seeds = List.append [for i: int64 in 0L..seedRanges.[1] - 1L do lowerBound1 + i] [for i: int64 in 0L..seedRanges.[3] - 1L do lowerBound2 + i]
     
+    let seedToSoil = splitInputMaps |> buildListOfIntegers 1
+    let soilToFertilizer = splitInputMaps |> buildListOfIntegers 2
+    let fertilizerToWater = splitInputMaps |> buildListOfIntegers 3
+    let waterToLight = splitInputMaps |> buildListOfIntegers 4
+    let lightToTemperature = splitInputMaps |> buildListOfIntegers 5
+    let temperatureToHumidity = splitInputMaps |> buildListOfIntegers 6
+    let humidityToLocation = splitInputMaps |> buildListOfIntegers 7
+    
+    let almanac = Almanac.fromData seeds seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
+    almanac
 
 let buildMapperFromMapLists (mapList: list<list<Int64>>) = 
     let mutable mapperList = []
@@ -138,9 +168,10 @@ let main (argv: String array) =
             printfn "Processing %s" filepath
 
             let part1 = filepath |> buildAlmanacFromInput |> calculateLowestLocationNumber
+            let part2 = filepath |> buildBigAlmanacFromInput |> calculateLowestLocationNumber
             
             printfn "Part 1: %i" part1
-            printfn "Part 2: %i" -1
+            printfn "Part 2: %i" part2
 
             0
         else    
