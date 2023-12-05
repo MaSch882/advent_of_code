@@ -15,10 +15,8 @@ type SimpleAlmanac =
 
 type BigAlmanac = 
     {
-        LowerSeedBoundA: int64
-        SeedRangeA: int64        
-        LowerSeedBoundB: int64
-        SeedRangeB: int64
+        LowerBounds: list<Int64>
+        Ranges: list<Int64>
 
         SeedToSoilMap: list<list<Int64>>
         SoilToFertilizerMap: list<list<Int64>>
@@ -51,12 +49,10 @@ module SimpleAlmanac =
 
 module BigAlmanac =
 
-    let fromData (lowerBoundA: int64) (rangeA: int64) (lowerBoundB: int64) (rangeB: int64) (seedSoil: list<list<Int64>>) (soilFert: list<list<Int64>>) (fertWater: list<list<Int64>>) (waterLight: list<list<Int64>>) (lightTemp: list<list<Int64>>) (tempHum: list<list<Int64>>) (humLoc: list<list<Int64>>): BigAlmanac = 
+    let fromData (lowerBounds: list<Int64>) (ranges: list<Int64>) (seedSoil: list<list<Int64>>) (soilFert: list<list<Int64>>) (fertWater: list<list<Int64>>) (waterLight: list<list<Int64>>) (lightTemp: list<list<Int64>>) (tempHum: list<list<Int64>>) (humLoc: list<list<Int64>>): BigAlmanac = 
         {
-            LowerSeedBoundA = lowerBoundA
-            SeedRangeA = rangeA
-            LowerSeedBoundB = lowerBoundB
-            SeedRangeB = rangeB
+            LowerBounds = lowerBounds
+            Ranges = ranges
 
             SeedToSoilMap = seedSoil
             SoilToFertilizerMap = soilFert
@@ -125,12 +121,14 @@ let buildBigAlmanacFromInput (filepath: string) =
     splitInputMaps <- splitInputMaps |> List.rev
 
     let seedRanges = splitInputMaps.[0].[0].Split(":").[1].Trim().Split(" ") |> Array.toList |> List.map int64
-    let lowerBound1 = seedRanges.[0]
-    let range1 = seedRanges.[1]
-    let lowerBound2 = seedRanges.[2]
-    let range2 = seedRanges.[3]
+    let mutable lowerBounds = []
+    let mutable ranges = []
 
-    let seeds = List.append [for i: int64 in 0L..seedRanges.[1] - 1L do lowerBound1 + i] [for i: int64 in 0L..seedRanges.[3] - 1L do lowerBound2 + i]
+    for i in 0..seedRanges.Length - 1 do
+        if i % 2 = 0 then 
+            lowerBounds <- lowerBounds |> List.append [seedRanges.[i]]
+        else 
+            ranges <- ranges |> List.append [seedRanges.[i]]
     
     let seedToSoil = splitInputMaps |> buildListOfIntegers 1
     let soilToFertilizer = splitInputMaps |> buildListOfIntegers 2
@@ -140,7 +138,7 @@ let buildBigAlmanacFromInput (filepath: string) =
     let temperatureToHumidity = splitInputMaps |> buildListOfIntegers 6
     let humidityToLocation = splitInputMaps |> buildListOfIntegers 7
     
-    let almanac = BigAlmanac.fromData  lowerBound1 range1 lowerBound2 range2 seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
+    let almanac = BigAlmanac.fromData lowerBounds ranges seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
     almanac
 
 let buildMapperFromMapLists (mapList: list<list<Int64>>) = 
@@ -196,42 +194,29 @@ let calculateLowestLocationNumberBigAlmanac (almanac: BigAlmanac) =
     let temperatureToHumidityMapper = almanac.TemperatureToHumidityMap |> buildMapperFromMapLists
     let humidityToLocationMapper = almanac.HumidityToLocationMap |> buildMapperFromMapLists
 
-    let lowerSeedBoundA = almanac.LowerSeedBoundA
-    let lowerSeedBoundB = almanac.LowerSeedBoundB
-    let seedRangeA = almanac.SeedRangeA
-    let seedRangeB = almanac.SeedRangeB
+    let lowerSeedBounds = almanac.LowerBounds
+    let seedRanges = almanac.Ranges
 
     let mutable currentMinimumLocation: int64 = Int64.MaxValue
 
-    for i: int64 in 0L..seedRangeA do
-        let seed = lowerSeedBoundA + i
-        let location = 
-            [seed] 
-            |> mapAllFromMapList seedToSoilMapper 
-            |> mapAllFromMapList soilToFertilizerMapper
-            |> mapAllFromMapList fertilizerToWaterMapper
-            |> mapAllFromMapList waterToLightMapper
-            |> mapAllFromMapList lightToTemperatureMapper
-            |> mapAllFromMapList temperatureToHumidityMapper
-            |> mapAllFromMapList humidityToLocationMapper
-            |> List.sum
-        if location < currentMinimumLocation then
-            currentMinimumLocation <- location
+    for i in 0..lowerSeedBounds.Length - 1 do
+        let lowerBound = lowerSeedBounds.[i]
+        let range = seedRanges.[i]
 
-    for i: int64 in 0L..seedRangeB do
-        let seed = lowerSeedBoundB + i
-        let location = 
-            [seed] 
-            |> mapAllFromMapList seedToSoilMapper 
-            |> mapAllFromMapList soilToFertilizerMapper
-            |> mapAllFromMapList fertilizerToWaterMapper
-            |> mapAllFromMapList waterToLightMapper
-            |> mapAllFromMapList lightToTemperatureMapper
-            |> mapAllFromMapList temperatureToHumidityMapper
-            |> mapAllFromMapList humidityToLocationMapper
-            |> List.sum
-        if location < currentMinimumLocation then
-            currentMinimumLocation <- location
+        for j: int64 in 0L..range do
+            let seed = lowerBound + j
+            let location = 
+                [seed] 
+                |> mapAllFromMapList seedToSoilMapper 
+                |> mapAllFromMapList soilToFertilizerMapper
+                |> mapAllFromMapList fertilizerToWaterMapper
+                |> mapAllFromMapList waterToLightMapper
+                |> mapAllFromMapList lightToTemperatureMapper
+                |> mapAllFromMapList temperatureToHumidityMapper
+                |> mapAllFromMapList humidityToLocationMapper
+                |> List.sum
+            if location < currentMinimumLocation then
+                currentMinimumLocation <- location
 
     currentMinimumLocation
 
