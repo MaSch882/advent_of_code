@@ -3,25 +3,25 @@ open System.IO
 
 type Almanac = 
     {
-        Seeds: list<int>
-        SeedToSoilMap: list<list<int>>
-        SoilToFertilizerMap: list<list<int>>
-        FertilizerToWaterMap: list<list<int>>
-        WaterToLightMap: list<list<int>>
-        LightToTemperatureMap: list<list<int>>
-        TemperatureToHumidityMap: list<list<int>>
-        HumidityToLocationMap: list<list<int>>
+        Seeds: list<Int64>
+        SeedToSoilMap: list<list<Int64>>
+        SoilToFertilizerMap: list<list<Int64>>
+        FertilizerToWaterMap: list<list<Int64>>
+        WaterToLightMap: list<list<Int64>>
+        LightToTemperatureMap: list<list<Int64>>
+        TemperatureToHumidityMap: list<list<Int64>>
+        HumidityToLocationMap: list<list<Int64>>
     }
 
 type Mapper = 
     {
-        LowerBound: int
-        UpperBound: int
-        Offset: int
+        LowerBound: Int64
+        UpperBound: Int64
+        Offset: Int64
     }
 
 module Almanac =
-    let fromData (seeds: list<int>) (seedSoil: list<list<int>>) (soilFert: list<list<int>>) (fertWater: list<list<int>>) (waterLight: list<list<int>>) (lightTemp: list<list<int>>) (tempHum: list<list<int>>) (humLoc: list<list<int>>)=
+    let fromData (seeds: list<Int64>) (seedSoil: list<list<Int64>>) (soilFert: list<list<Int64>>) (fertWater: list<list<Int64>>) (waterLight: list<list<Int64>>) (lightTemp: list<list<Int64>>) (tempHum: list<list<Int64>>) (humLoc: list<list<Int64>>)=
         {
             Seeds = seeds
             SeedToSoilMap = seedSoil
@@ -35,10 +35,10 @@ module Almanac =
         
 module Mapper = 
 
-    let fromData (src: int) (rangeWidth: int) (offset: int)= 
+    let fromData (src: Int64) (rangeWidth: Int64) (offset: Int64)= 
         {
             LowerBound = src
-            UpperBound = src + rangeWidth - 1
+            UpperBound = src + rangeWidth - 1L
             Offset = offset       
         }
 
@@ -47,7 +47,7 @@ let buildListOfIntegers (index: int) (splitInputMaps: string list list)=
         |> List.skip 1 
         |> List.map (fun s  -> s.Trim()) 
         |> List.map (fun s -> s.Split(" ")) 
-        |> List.map (fun str -> str |> Array.toList |> List.map int)
+        |> List.map (fun str -> str |> Array.toList |> List.map int64)
 
 let buildAlmanacFromInput (filepath: string) = 
     let input = filepath |> File.ReadAllLines
@@ -63,7 +63,7 @@ let buildAlmanacFromInput (filepath: string) =
             currentBlock <- []
     splitInputMaps <- splitInputMaps |> List.rev
 
-    let seeds = splitInputMaps.[0].[0].Split(":").[1].Trim().Split(" ") |> Array.toList |> List.map int
+    let seeds = splitInputMaps.[0].[0].Split(":").[1].Trim().Split(" ") |> Array.toList |> List.map int64
 
     let seedToSoil = splitInputMaps |> buildListOfIntegers 1
     let soilToFertilizer = splitInputMaps |> buildListOfIntegers 2
@@ -77,7 +77,7 @@ let buildAlmanacFromInput (filepath: string) =
     almanac
     
 
-let buildMapperFromMapLists (mapList: list<list<int>>) = 
+let buildMapperFromMapLists (mapList: list<list<Int64>>) = 
     let mutable mapperList = []
     for mapping in mapList do 
         let offset = mapping.[0] - mapping.[1]
@@ -86,7 +86,7 @@ let buildMapperFromMapLists (mapList: list<list<int>>) =
     mapperList <- mapperList |> List.rev 
     mapperList
 
-let mapAllFromMapList (mapperList: list<Mapper>) (listToMap: list<int>) = 
+let mapAllFromMapList (mapperList: list<Mapper>) (listToMap: list<Int64>) = 
     let mutable mappedSeeds = []
     for seed in listToMap do 
         let mutable needsToBeAppended = true
