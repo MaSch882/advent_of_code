@@ -32,7 +32,9 @@ let buildCards (strings: string array) : list<Card> =
 
     for s in strings do 
         let stringSplittedAtId = s.Split(":")
-        let id = int (stringSplittedAtId.[0].Split(" ").[1])
+
+        let idParts = stringSplittedAtId.[0].Split(" ")
+        let id = int (idParts[idParts.Length - 1])
 
         let stringSplittedAtCard = stringSplittedAtId.[1].Split("|") |> Array.map (fun s -> s.Trim())
 
