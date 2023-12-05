@@ -13,6 +13,12 @@ type Almanac =
         HumidityToLocationMap: list<list<int>>
     }
 
+type Mapper = 
+    {
+        SourceRange: list<int>
+        Offset: int
+    }
+
 module Almanac =
     let fromData (seeds: list<int>) (seedSoil: list<list<int>>) (soilFert: list<list<int>>) (fertWater: list<list<int>>) (waterLight: list<list<int>>) (lightTemp: list<list<int>>) (tempHum: list<list<int>>) (humLoc: list<list<int>>)=
         {
@@ -24,6 +30,14 @@ module Almanac =
             LightToTemperatureMap = lightTemp
             TemperatureToHumidityMap = tempHum
             HumidityToLocationMap = humLoc
+        }
+        
+module Mapper = 
+
+    let fromData (sourceRange: list<int>) (offset: int) = 
+        {
+            SourceRange = sourceRange
+            Offset = offset       
         }
 
 let buildListOfIntegers (index: int) (splitInputMaps: string list list)= 
@@ -57,10 +71,40 @@ let buildAlmanacFromInput (filepath: string) =
     let temperatureToHumidity = splitInputMaps |> buildListOfIntegers 6
     let humidityToLocation = splitInputMaps |> buildListOfIntegers 7
     
-    let almanac = Almanac.fromData seeds soilToFertilizer fertilizerToWater waterToLight lightToTemperature lightToTemperature temperatureToHumidity humidityToLocation
+    let almanac = Almanac.fromData seeds seedToSoil soilToFertilizer fertilizerToWater waterToLight lightToTemperature temperatureToHumidity humidityToLocation
     almanac
     
+
+let buildMapperFromMapLists (mapList: list<list<int>>) = 
+    let mutable mapperList = []
+    for mapping in mapList do 
+        let sourceRange = [for i in 0..mapping.[2]-1 do mapping.[1]+i]
+        let offset = mapping.[0] - mapping.[1]
+        let mapper = Mapper.fromData sourceRange offset
+        mapperList <- mapperList |> List.append [mapper]
+    mapperList
+
+let mapAllFromMapList (mapperList: list<Mapper>) (listToMap: list<int>) = 
+    let mutable mappedSeeds = []
+    for seed in listToMap do 
+        let mutable needsToBeAppended = true
+        for mapper in mapperList do
+            if mapper.SourceRange |> List.contains seed then
+                mappedSeeds <- mappedSeeds |> List.append [seed + mapper.Offset]
+                needsToBeAppended <- false 
+            if needsToBeAppended then 
+                mappedSeeds <- mappedSeeds |> List.append [seed]
+                needsToBeAppended <- false
+    mappedSeeds <- mappedSeeds |> List.rev
+    mappedSeeds
+
 let calculateLowestLocationNumber (almanac: Almanac) =
+    let seeds = almanac.Seeds
+    
+    // Seed To Soil
+    let mutable seedMapper= almanac.SeedToSoilMap |> buildMapperFromMapLists 
+    let mappedSeeds = seeds |> mapAllFromMapList seedMapper
+
     -2
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
