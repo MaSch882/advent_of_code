@@ -15,7 +15,8 @@ type Almanac =
 
 type Mapper = 
     {
-        SourceRange: list<int>
+        LowerBound: int
+        UpperBound: int
         Offset: int
     }
 
@@ -34,9 +35,10 @@ module Almanac =
         
 module Mapper = 
 
-    let fromData (sourceRange: list<int>) (offset: int) = 
+    let fromData (src: int) (rangeWidth: int) (offset: int)= 
         {
-            SourceRange = sourceRange
+            LowerBound = src
+            UpperBound = src + rangeWidth - 1
             Offset = offset       
         }
 
@@ -78,10 +80,10 @@ let buildAlmanacFromInput (filepath: string) =
 let buildMapperFromMapLists (mapList: list<list<int>>) = 
     let mutable mapperList = []
     for mapping in mapList do 
-        let sourceRange = [for i in 0..mapping.[2]-1 do mapping.[1]+i]
         let offset = mapping.[0] - mapping.[1]
-        let mapper = Mapper.fromData sourceRange offset
+        let mapper = Mapper.fromData mapping.[1] mapping.[2] offset
         mapperList <- mapperList |> List.append [mapper]
+    mapperList <- mapperList |> List.rev 
     mapperList
 
 let mapAllFromMapList (mapperList: list<Mapper>) (listToMap: list<int>) = 
@@ -89,23 +91,35 @@ let mapAllFromMapList (mapperList: list<Mapper>) (listToMap: list<int>) =
     for seed in listToMap do 
         let mutable needsToBeAppended = true
         for mapper in mapperList do
-            if mapper.SourceRange |> List.contains seed then
+            if (mapper.LowerBound <= seed) && (seed <= mapper.UpperBound) then
                 mappedSeeds <- mappedSeeds |> List.append [seed + mapper.Offset]
                 needsToBeAppended <- false 
-            if needsToBeAppended then 
-                mappedSeeds <- mappedSeeds |> List.append [seed]
-                needsToBeAppended <- false
+        if needsToBeAppended then 
+            mappedSeeds <- mappedSeeds |> List.append [seed]
+            needsToBeAppended <- false
     mappedSeeds <- mappedSeeds |> List.rev
     mappedSeeds
 
 let calculateLowestLocationNumber (almanac: Almanac) =
     let seeds = almanac.Seeds
     
-    // Seed To Soil
-    let mutable seedMapper= almanac.SeedToSoilMap |> buildMapperFromMapLists 
-    let mappedSeeds = seeds |> mapAllFromMapList seedMapper
+    let seedToSoilMapper= almanac.SeedToSoilMap |> buildMapperFromMapLists
+    let soilToFertilizerMapper = almanac.SoilToFertilizerMap |> buildMapperFromMapLists
+    let fertilizerToWaterMapper = almanac.FertilizerToWaterMap |> buildMapperFromMapLists
+    let waterToLightMapper = almanac.WaterToLightMap |> buildMapperFromMapLists
+    let lightToTemperatureMapper = almanac.LightToTemperatureMap |> buildMapperFromMapLists
+    let temperatureToHumidityMapper = almanac.TemperatureToHumidityMap |> buildMapperFromMapLists
+    let humidityToLocationMapper = almanac.HumidityToLocationMap |> buildMapperFromMapLists
 
-    -2
+    seeds 
+        |> mapAllFromMapList seedToSoilMapper 
+        |> mapAllFromMapList soilToFertilizerMapper
+        |> mapAllFromMapList fertilizerToWaterMapper
+        |> mapAllFromMapList waterToLightMapper
+        |> mapAllFromMapList lightToTemperatureMapper
+        |> mapAllFromMapList temperatureToHumidityMapper
+        |> mapAllFromMapList humidityToLocationMapper
+        |> List.min
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
     arguments.Length = 1 && File.Exists filepath
