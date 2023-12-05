@@ -26,14 +26,21 @@ module Almanac =
             HumidityToLocationMap = humLoc
         }
 
-let calculateLowestLocationOfSeeds (filepath: string) = 
+let buildListOfIntegers (index: int) (splitInputMaps: string list list)= 
+    splitInputMaps.[index] 
+        |> List.skip 1 
+        |> List.map (fun s  -> s.Trim()) 
+        |> List.map (fun s -> s.Split(" ")) 
+        |> List.map (fun str -> str |> Array.toList |> List.map int)
+
+let buildAlmanacFromInput (filepath: string) = 
     let input = filepath |> File.ReadAllLines
 
     let mutable splitInputMaps = []
 
     let mutable currentBlock = []
     for line in input do         
-        if line <> "" then 
+        if line <> "" && line <> "END" then 
             currentBlock <- currentBlock |> List.append [line]
         else 
             splitInputMaps <- splitInputMaps |> List.append [currentBlock |> List.rev]
@@ -42,12 +49,18 @@ let calculateLowestLocationOfSeeds (filepath: string) =
 
     let seeds = splitInputMaps.[0].[0].Split(":").[1].Trim().Split(" ") |> Array.toList |> List.map int
 
-
-    for list in splitInputMaps do
-        for s in list do
-            printfn "%s" s
-        printfn "----------------------"
-
+    let seedToSoil = splitInputMaps |> buildListOfIntegers 1
+    let soilToFertilizer = splitInputMaps |> buildListOfIntegers 2
+    let fertilizerToWater = splitInputMaps |> buildListOfIntegers 3
+    let waterToLight = splitInputMaps |> buildListOfIntegers 4
+    let lightToTemperature = splitInputMaps |> buildListOfIntegers 5
+    let temperatureToHumidity = splitInputMaps |> buildListOfIntegers 6
+    let humidityToLocation = splitInputMaps |> buildListOfIntegers 7
+    
+    let almanac = Almanac.fromData seeds soilToFertilizer fertilizerToWater waterToLight lightToTemperature lightToTemperature temperatureToHumidity humidityToLocation
+    almanac
+    
+let calculateLowestLocationNumber (almanac: Almanac) =
     -2
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
@@ -66,7 +79,7 @@ let main (argv: String array) =
         if filepath |> fileIsGivenAndExists argv then 
             printfn "Processing %s" filepath
 
-            let part1 = filepath |> calculateLowestLocationOfSeeds
+            let part1 = filepath |> buildAlmanacFromInput |> calculateLowestLocationNumber
             
             printfn "Part 1: %i" part1
             printfn "Part 2: %i" -1
