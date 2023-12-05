@@ -1,5 +1,6 @@
 ﻿open System 
 open System.IO
+open System.Collections.Generic
 
 type Card =
     {
@@ -71,6 +72,33 @@ let determinePoints (cards: Card list) =
         totalPoints <- totalPoints + points
     totalPoints       
 
+let countWonCards (cards: list<Card>) =
+    let cards = List.rev cards
+    
+    let dict = new Dictionary<Card, int>()
+    for card in cards do 
+        dict.Add(card, 1)
+    
+    for card in cards do
+
+        let mutable hits = 0   
+        let winningNumbers = card.WinningNumbers
+        let matchingNumbers = card.MatchNumbers
+
+        for number in matchingNumbers do
+            if List.contains number winningNumbers then
+                hits <- hits + 1
+
+        for j in 0..hits-1 do
+            // dict.["everything"] <- 42
+            let nextCard = cards[card.ID+j]
+            dict[nextCard] <- dict[nextCard] + dict[card]
+
+    let mutable sum = 0
+    for entry in dict do 
+        sum <- sum + entry.Value
+    sum
+
 let fileIsGivenAndExists (arguments: String array) (filepath: string) =
     arguments.Length = 1 && File.Exists filepath
 
@@ -89,9 +117,10 @@ let main argv =
             printfn "Processing %s" filepath
 
             let part1 = filepath |> File.ReadAllLines |> buildCards |> determinePoints
+            let part2 = filepath |> File.ReadAllLines |> buildCards |> countWonCards
                         
             printfn "Part 1: %i" part1
-            printfn "Part 2: %i" 0
+            printfn "Part 2: %i" part2
             0
         else
             printfn "File does not exist!"
