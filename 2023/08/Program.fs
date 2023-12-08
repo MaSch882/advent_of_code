@@ -70,7 +70,73 @@ let countStepsToReachEnd (seq: string) (n: list<Node>) =
     steps
 
 
+let rec greatestCommonDivisor (a: int64) (b: int64): int64 =
+    if b = 0 then abs a else greatestCommonDivisor b (a % b)
+
+let leastCommonMultiple (a: int64) (b: int64) : int64 =
+    (a * b) / greatestCommonDivisor a b
+
+let rec leastCommonMultipleForList (numbers: list<int64>) =
+    match numbers with
+        | [] -> 1L
+        | [a] -> a
+        | [a;b] -> leastCommonMultiple a b
+        | h::t -> leastCommonMultiple h (leastCommonMultipleForList t)
+
+let countSimultaneousStepsToReachEnd (seq: string) (n: list<Node>) =
+    let mutable factors : list<int64> = []
+
+    let sequence = seq
+    let nodes = n
+
+    let sequenceAsChars = sequence.ToCharArray() |> Array.map string
+    let mutable nextInput = sequenceAsChars.[0]
+
+    let nodesEndingWithA = nodes |> List.filter (fun node -> node.Name.EndsWith("A"))
+
+    for node in nodesEndingWithA do
+        let mutable steps = 0
+        let mutable currentNode = node 
+        while not (currentNode.Name.EndsWith("Z")) do 
+            if nextInput = "L" then
+                currentNode <- nodes |> List.find (fun node -> node.Name = currentNode.Left)
+                steps <- steps + 1
+                nextInput <- sequenceAsChars.[steps % sequence.Length] 
+            else 
+                currentNode <- nodes |> List.find (fun node -> node.Name = currentNode.Right)
+                steps <- steps + 1
+                nextInput <- sequenceAsChars.[steps % sequence.Length] 
+        factors <- factors |> List.append [steps]
+
     
+    let lcmFactors = leastCommonMultipleForList factors
+    lcmFactors
+
+
+    // while anotherStepNecessary do
+    //     if nextInput = "L" then 
+    //         let tempNodes = currentNodes
+    //         currentNodes <- [] 
+    //         for currentNode in tempNodes do 
+    //             currentNodes <- currentNodes |> List.append [nodes |> List.find (fun node -> node.Name = currentNode.Left)]  
+    //         currentNodes <- currentNodes |> List.rev
+
+    //         if currentNodes |> List.forall (fun node -> node.Name.EndsWith("Z")) then 
+    //             anotherStepNecessary <- false
+    //         steps <- steps + 1
+    //         nextInput <- sequenceAsChars.[steps % sequence.Length]
+    //     else   
+    //         let tempNodes = currentNodes
+    //         currentNodes <- [] 
+    //         for currentNode in tempNodes do 
+    //             currentNodes <- currentNodes |> List.append [nodes |> List.find (fun node -> node.Name = currentNode.Right)]
+    //         currentNodes <- currentNodes |> List.rev
+                
+    //         if currentNodes |> List.forall (fun node -> node.Name.EndsWith("Z")) then 
+    //             anotherStepNecessary <- false
+    //         steps <- steps + 1 
+    //         nextInput <- sequenceAsChars.[steps % sequence.Length]
+    // steps   
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
     arguments.Length = 1 && File.Exists filepath
@@ -88,10 +154,10 @@ let main (argv: String array) =
         if filepath |> fileIsGivenAndExists argv then 
             printfn "Processing %s" filepath
 
-            let part1 = countStepsToReachEnd (filepath |> buildSequence) (filepath |> buildNodes)
-            let part2 = -1
+            // let part1 = countStepsToReachEnd (filepath |> buildSequence) (filepath |> buildNodes)
+            let part2 = countSimultaneousStepsToReachEnd (filepath |> buildSequence) (filepath |> buildNodes)
             
-            printfn "Part 1: %i" part1
+            // printfn "Part 1: %i" part1
             printfn "Part 2: %i" part2
 
             0
