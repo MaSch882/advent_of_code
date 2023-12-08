@@ -71,7 +71,9 @@ let countStepsToReachEnd (seq: string) (n: list<Node>) =
 
 
 let rec greatestCommonDivisor (a: int64) (b: int64): int64 =
-    if b = 0 then abs a else greatestCommonDivisor b (a % b)
+    match b with
+        | 0L -> abs a
+        | _ -> greatestCommonDivisor b (a % b)
 
 let leastCommonMultiple (a: int64) (b: int64) : int64 =
     (a * b) / greatestCommonDivisor a b
@@ -112,6 +114,8 @@ let countSimultaneousStepsToReachEnd (seq: string) (n: list<Node>) =
     let lcmFactors = leastCommonMultipleForList factors
     lcmFactors
 
+
+    // Folgender Ansatz funktioniert, ist aber wesentlich zu langsam!!!
 
     // while anotherStepNecessary do
     //     if nextInput = "L" then 
@@ -154,10 +158,10 @@ let main (argv: String array) =
         if filepath |> fileIsGivenAndExists argv then 
             printfn "Processing %s" filepath
 
-            // let part1 = countStepsToReachEnd (filepath |> buildSequence) (filepath |> buildNodes)
+            let part1 = countStepsToReachEnd (filepath |> buildSequence) (filepath |> buildNodes)
             let part2 = countSimultaneousStepsToReachEnd (filepath |> buildSequence) (filepath |> buildNodes)
             
-            // printfn "Part 1: %i" part1
+            printfn "Part 1: %i" part1
             printfn "Part 2: %i" part2
 
             0
