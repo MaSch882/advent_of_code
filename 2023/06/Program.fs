@@ -15,6 +15,38 @@ module Race =
             Record = r
         }
 
+    let toString (race: Race) = 
+        printfn "Duration: %i; Record: %i" race.Duration race.Record
+
+let buildRaces (filepath: string) : list<Race> = 
+    let input = filepath |> File.ReadAllLines
+
+    let durations =
+        input.[0].Split(":").[1].Trim().Split(" ") 
+        |> Array.map (fun s -> s.Trim()) 
+        |> Array.filter (fun s -> s <> "") 
+        |> Array.toList
+        |> List.map int
+
+    let records = 
+        input.[1].Split(":").[1].Trim().Split(" ") 
+        |> Array.map (fun s -> s.Trim()) 
+        |> Array.filter (fun s -> s <> "") 
+        |> Array.toList
+        |> List.map int
+
+    let mutable races = []
+
+    for i in 0..durations.Length - 1 do 
+        races <- races |> List.append [Race.fromData durations.[i] records.[i]]
+    races <- races |> List.rev
+
+    races
+
+let multiplyNumberOfWins (races: list<Race>) = 
+    -2
+
+
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
     arguments.Length = 1 && File.Exists filepath
 
@@ -31,7 +63,7 @@ let main (argv: String array) =
         if filepath |> fileIsGivenAndExists argv then 
             printfn "Processing %s" filepath
 
-            let part1 = -1
+            let part1 = filepath |> buildRaces |> multiplyNumberOfWins
             let part2 = -1
             
             printfn "Part 1: %i" part1
