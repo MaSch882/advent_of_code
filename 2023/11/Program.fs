@@ -41,6 +41,38 @@ let buildPlanetsFromInput (filepath: string) =
     planets
 
 
+let calculateIndicesOfEmptyRows (filepath: string) = 
+    let mutable indices = []
+
+    let lines = filepath |> File.ReadAllLines
+    for i in 0..lines.Length - 1 do 
+        let line = lines.[i]
+        let chars = line.ToCharArray()
+        if chars |> Array.forall (fun c -> c = '.') then
+            indices <- indices |> List.append [i]
+
+    indices <- indices |> List.rev
+    indices
+
+
+let calculateIndicesOfEmptyColumns (filepath: string) = 
+    let mutable indices = []
+
+    let lines = filepath |> File.ReadAllLines
+    for i in 0..lines.[0].Length - 1 do
+        let mutable isEmpty = true
+        for j in 0..lines.Length - 1 do 
+            if lines.[j].[i] <> '.' then 
+                isEmpty <- false 
+        if isEmpty then 
+            indices <- indices |> List.append [i]
+
+    indices <- indices |> List.rev
+    indices
+    
+
+
+
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
     arguments.Length = 1 && File.Exists filepath
 
@@ -58,6 +90,8 @@ let main argv =
             printfn "Processing %s" filepath
 
             let planets = filepath |> buildPlanetsFromInput
+            let emptyRowIndices = filepath |> calculateIndicesOfEmptyRows
+            let emptyColumnIndices = filepath |> calculateIndicesOfEmptyColumns
 
             let part1 = -1
             let part2 = -1
