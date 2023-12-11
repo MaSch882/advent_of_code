@@ -96,13 +96,21 @@ let expandUniverse (emptyRowIndices: list<int>) (emptyColumnIndices: list<int>) 
 
     planetsAfter <- planetsAfter |> List.rev
 
-    for planet in planetsAfter do 
-        Planet.ToString planet
-
     planetsAfter
 
     
-    
+let calculateShortestDistance (planet1: Planet) (planet2: Planet) =
+    let l1 = abs (planet1.X - planet2.X) + abs (planet1.Y - planet2.Y)
+    l1
+
+
+let sumShortestPaths (planets: list<Planet>) = 
+    let mutable sumOfShortestPaths = 0
+    for planet1 in planets do
+        for planet2 in planets do
+            sumOfShortestPaths <- sumOfShortestPaths + calculateShortestDistance planet1 planet2
+    sumOfShortestPaths <- sumOfShortestPaths / 2
+    sumOfShortestPaths
 
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
@@ -126,7 +134,7 @@ let main argv =
             let emptyColumnIndices = filepath |> calculateIndicesOfEmptyColumns |> List.map int
             let expandedPlanets = planets |> expandUniverse emptyRowIndices emptyColumnIndices
 
-            let part1 = -1
+            let part1 = expandedPlanets |> sumShortestPaths
             let part2 = -1
             printfn "Part 1: %i" part1
             printfn "Part 2: %i" part2 
