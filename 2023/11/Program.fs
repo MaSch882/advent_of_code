@@ -4,8 +4,8 @@ open System.IO
 type Planet = 
     {
         Id: int
-        X: int 
-        Y: int
+        X: int64 
+        Y: int64
     }
 
 module Planet =
@@ -13,14 +13,14 @@ module Planet =
     let ToString (planet: Planet) = 
         printfn "Planet %i: (%i, %i)" planet.Id planet.X planet.Y
 
-    let fromData (id: int) (x: int) (y: int) = 
+    let fromData (id: int) (x: int64) (y: int64) = 
         {
             Id = id
             X = x
             Y = y
         }
 
-    let manipulateCoordinates (dx: int) (dy: int) (planet: Planet) = 
+    let manipulateCoordinates (dx: int64) (dy: int64) (planet: Planet) = 
         {
             Id = planet.Id
             X = planet.X + dx
@@ -42,7 +42,7 @@ let buildPlanetsFromInput (filepath: string) =
 
 
 let calculateIndicesOfEmptyRows (filepath: string) = 
-    let mutable indices = []
+    let mutable indices: int64 list = []
 
     let lines = filepath |> File.ReadAllLines
     for i in 0..lines.Length - 1 do 
@@ -51,12 +51,12 @@ let calculateIndicesOfEmptyRows (filepath: string) =
         if chars |> Array.forall (fun c -> c = '.') then
             indices <- indices |> List.append [i]
 
-    indices <- indices |> List.rev
+    indices <- indices |> List.rev |> List.map int64
     indices
 
 
 let calculateIndicesOfEmptyColumns (filepath: string) = 
-    let mutable indices = []
+    let mutable indices: int64 list = []
 
     let lines = filepath |> File.ReadAllLines
     for i in 0..lines.[0].Length - 1 do
@@ -67,28 +67,58 @@ let calculateIndicesOfEmptyColumns (filepath: string) =
         if isEmpty then 
             indices <- indices |> List.append [i]
 
-    indices <- indices |> List.rev
+    indices <- indices |> List.rev |> List.map int64
     indices
     
-let expandUniverse (emptyRowIndices: list<int>) (emptyColumnIndices: list<int>) (planetsBefore: list<Planet>) = 
+let expandUniverse (emptyRowIndices: list<int64>) (emptyColumnIndices: list<int64>) (planetsBefore: list<Planet>) = 
     let mutable planetsAfter = []
 
     for planet in planetsBefore do
         // Spaltenshift
         let yCoordinateBefore = planet.Y
-        let mutable yCoordinateShift = 0
+        let mutable yCoordinateShift = 0L
 
         for i in emptyColumnIndices do 
             if i < yCoordinateBefore then
-                yCoordinateShift <- yCoordinateShift + 1
+                yCoordinateShift <- yCoordinateShift + 1L
 
         // Zeilenshift
         let xCoordinateBefore = planet.X
-        let mutable xCoordinateShift = 0
+        let mutable xCoordinateShift = 0L
 
         for i in emptyRowIndices do 
             if i < xCoordinateBefore then
-                xCoordinateShift <- xCoordinateShift + 1
+                xCoordinateShift <- xCoordinateShift + 1L
+
+        let xCoordinateAfter = xCoordinateBefore + xCoordinateShift
+        let yCoordinateAfter = yCoordinateBefore + yCoordinateShift
+        planetsAfter <- planetsAfter |> List.append [Planet.fromData planet.Id xCoordinateAfter yCoordinateAfter]
+
+    planetsAfter <- planetsAfter |> List.rev
+
+    planetsAfter
+
+
+let expandUniverseBigBang (emptyRowIndices: list<int64>) (emptyColumnIndices: list<int64>) (planetsBefore: list<Planet>) =
+    let mutable planetsAfter = []
+    let offset = 999999L
+    
+    for planet in planetsBefore do
+        // Spaltenshift
+        let yCoordinateBefore = planet.Y
+        let mutable yCoordinateShift: int64 = 0
+
+        for i in emptyColumnIndices do 
+            if i < yCoordinateBefore then
+                yCoordinateShift <- yCoordinateShift + offset
+
+        // Zeilenshift
+        let xCoordinateBefore = planet.X
+        let mutable xCoordinateShift: int64 = 0
+
+        for i in emptyRowIndices do 
+            if i < xCoordinateBefore then
+                xCoordinateShift <- xCoordinateShift + offset
 
         let xCoordinateAfter = xCoordinateBefore + xCoordinateShift
         let yCoordinateAfter = yCoordinateBefore + yCoordinateShift
@@ -105,11 +135,11 @@ let calculateShortestDistance (planet1: Planet) (planet2: Planet) =
 
 
 let sumShortestPaths (planets: list<Planet>) = 
-    let mutable sumOfShortestPaths = 0
+    let mutable sumOfShortestPaths: int64 = 0
     for planet1 in planets do
         for planet2 in planets do
             sumOfShortestPaths <- sumOfShortestPaths + calculateShortestDistance planet1 planet2
-    sumOfShortestPaths <- sumOfShortestPaths / 2
+    sumOfShortestPaths <- sumOfShortestPaths / 2L
     sumOfShortestPaths
 
 
@@ -130,12 +160,13 @@ let main argv =
             printfn "Processing %s" filepath
 
             let planets = filepath |> buildPlanetsFromInput
-            let emptyRowIndices = filepath |> calculateIndicesOfEmptyRows |> List.map int
-            let emptyColumnIndices = filepath |> calculateIndicesOfEmptyColumns |> List.map int
+            let emptyRowIndices = filepath |> calculateIndicesOfEmptyRows |> List.map int64
+            let emptyColumnIndices = filepath |> calculateIndicesOfEmptyColumns |> List.map int64
             let expandedPlanets = planets |> expandUniverse emptyRowIndices emptyColumnIndices
+            let expandedPlanetsBigBang = planets |> expandUniverseBigBang emptyRowIndices emptyColumnIndices
 
             let part1 = expandedPlanets |> sumShortestPaths
-            let part2 = -1
+            let part2 = expandedPlanetsBigBang  |> sumShortestPaths
             printfn "Part 1: %i" part1
             printfn "Part 2: %i" part2 
             0
