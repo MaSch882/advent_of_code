@@ -70,7 +70,39 @@ let calculateIndicesOfEmptyColumns (filepath: string) =
     indices <- indices |> List.rev
     indices
     
+let expandUniverse (emptyRowIndices: list<int>) (emptyColumnIndices: list<int>) (planetsBefore: list<Planet>) = 
+    let mutable planetsAfter = []
 
+    for planet in planetsBefore do
+        // Spaltenshift
+        let yCoordinateBefore = planet.Y
+        let mutable yCoordinateShift = 0
+
+        for i in emptyColumnIndices do 
+            if i < yCoordinateBefore then
+                yCoordinateShift <- yCoordinateShift + 1
+
+        // Zeilenshift
+        let xCoordinateBefore = planet.X
+        let mutable xCoordinateShift = 0
+
+        for i in emptyRowIndices do 
+            if i < xCoordinateBefore then
+                xCoordinateShift <- xCoordinateShift + 1
+
+        let xCoordinateAfter = xCoordinateBefore + xCoordinateShift
+        let yCoordinateAfter = yCoordinateBefore + yCoordinateShift
+        planetsAfter <- planetsAfter |> List.append [Planet.fromData planet.Id xCoordinateAfter yCoordinateAfter]
+
+    planetsAfter <- planetsAfter |> List.rev
+
+    for planet in planetsAfter do 
+        Planet.ToString planet
+
+    planetsAfter
+
+    
+    
 
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
@@ -90,8 +122,9 @@ let main argv =
             printfn "Processing %s" filepath
 
             let planets = filepath |> buildPlanetsFromInput
-            let emptyRowIndices = filepath |> calculateIndicesOfEmptyRows
-            let emptyColumnIndices = filepath |> calculateIndicesOfEmptyColumns
+            let emptyRowIndices = filepath |> calculateIndicesOfEmptyRows |> List.map int
+            let emptyColumnIndices = filepath |> calculateIndicesOfEmptyColumns |> List.map int
+            let expandedPlanets = planets |> expandUniverse emptyRowIndices emptyColumnIndices
 
             let part1 = -1
             let part2 = -1
