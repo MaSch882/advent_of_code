@@ -16,7 +16,8 @@ module Lens =
         }
 
     let toString (lens: Lens) = 
-        printf "[%s %i]" lens.Label lens.Length
+        let lensAsString =  "" + lens.Label + " " + (lens.Length |> string)
+        lensAsString
 
 let buildInitializationSequence (filepath: string) = 
     let input = filepath |> File.ReadAllLines
@@ -79,6 +80,18 @@ let buildHashmapFromInitializationSequence (initializationSequence: list<string>
 
     hashmap
 
+let visualizeHashmap (hashmap: array<array<Lens>>) = 
+    printfn "---"
+    for i in 0..hashmap.Length - 1 do
+        if not (hashmap.[i] |> Array.isEmpty) then
+            printf "Box %i: " i 
+            for lens in hashmap.[i] do
+                printf "[%s]" (lens |> Lens.toString)
+            printfn ""
+    printfn "---"
+
+
+
 let sumFocusingPower (hashmap : array<array<Lens>> ) =
     let mutable sum = 0
     
@@ -110,6 +123,9 @@ let main (argv: String array) =
             printfn "Processing %s" filepath
 
             let initializationSequence = filepath |> buildInitializationSequence |> Array.toList
+            let hashmap = initializationSequence |> buildHashmapFromInitializationSequence
+
+            // hashmap |> visualizeHashmap 
 
             let part1 = initializationSequence |> sumAllHashValuesOfStrings
             let part2 = initializationSequence |> buildHashmapFromInitializationSequence |> sumFocusingPower
