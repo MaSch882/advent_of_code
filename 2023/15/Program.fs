@@ -1,8 +1,24 @@
 ﻿open System 
 open System.IO
 
+type Lens =
+    {
+        Label: string
+        Length: int
+    }
 
-let buildStringsFromInput (filepath: string) = 
+module Lens = 
+
+    let fromData (label: string) (length: int) = 
+        {
+            Label = label
+            Length = length
+        }
+
+    let toString (lens: Lens) = 
+        printf "[%s %i]" lens.Label lens.Length
+
+let buildInitializationSequence (filepath: string) = 
     let input = filepath |> File.ReadAllLines
     let strings = input.[0].Split(",")
     strings
@@ -21,6 +37,62 @@ let sumAllHashValuesOfStrings (initializationSequence: list<string>) =
     initializationSequence |> List.map calculateHashedValue |> List.sum
 
 
+let buildHashmapFromInitializationSequence (initializationSequence: list<string>) =
+    let hashmap: array<array<Lens>> = [| for i in 0..255 do [||] |]
+
+    for command in initializationSequence do
+        // command = "="
+        if (command.ToCharArray() |> Array.contains '=') then 
+            let label = command.Split("=").[0]
+            let focalLength = command.Split("=").[1] |> int
+
+            let lens = Lens.fromData label focalLength
+
+            // Wohin wird gehasht?
+            let boxNumber = label |> calculateHashedValue 
+
+            // Bereits gehashte Werte holen.
+            let boxToUse = hashmap.[boxNumber]
+            // Existiert bereits der gehashte Wert?
+            let existsLensLabelInBoxToUse = (boxToUse |> Array.filter (fun lens -> lens.Label = label)).Length >= 1
+            if existsLensLabelInBoxToUse then
+                // Ersetze die alte durch die neue Linse.
+                let index = boxToUse |> Array.findIndex (fun lens -> lens.Label = label) 
+                boxToUse.[index] <- lens
+            // Haenge die Linse an.
+            else
+                hashmap.[boxNumber] <- boxToUse |> Array.insertAt (boxToUse.Length) lens 
+
+        // command = "-"
+        else    
+            let label = command.Split("-").[0]
+
+            // Wo soll geloescht werden?
+            let boxNumber = label |> calculateHashedValue 
+            // Bereits gehashte Werte holen.
+            let boxToUse = hashmap.[boxNumber]
+            
+            let existsLensLabelInBoxToUse = (boxToUse |> Array.filter (fun lens -> lens.Label = label)).Length >= 1
+            if existsLensLabelInBoxToUse then 
+                let index = boxToUse |> Array.findIndex (fun lens -> lens.Label = label)
+                hashmap.[boxNumber] <- boxToUse |> Array.removeAt index
+
+    hashmap
+
+let sumFocusingPower (hashmap : array<array<Lens>> ) =
+    let mutable sum = 0
+    
+    for i in 0..hashmap.Length - 1 do 
+
+        let box = hashmap.[i]
+
+        let mutable tempSum = 0
+        for j in 0..box.Length- 1 do
+            tempSum <- tempSum + (i+1) * (j+1) * box.[j].Length
+        sum <- sum + tempSum
+
+    sum
+
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
     arguments.Length = 1 && File.Exists filepath
 
@@ -37,10 +109,10 @@ let main (argv: String array) =
         if filepath |> fileIsGivenAndExists argv then 
             printfn "Processing %s" filepath
 
-            let input = filepath |> buildStringsFromInput |> Array.toList
+            let initializationSequence = filepath |> buildInitializationSequence |> Array.toList
 
-            let part1 = input |> sumAllHashValuesOfStrings
-            let part2 = -1
+            let part1 = initializationSequence |> sumAllHashValuesOfStrings
+            let part2 = initializationSequence |> buildHashmapFromInitializationSequence |> sumFocusingPower
             
             printfn "Part 1: %i" part1
             printfn "Part 2: %i" part2
