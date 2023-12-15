@@ -1,6 +1,12 @@
 ﻿open System 
 open System.IO
 
+
+let buildStringsFromInput (filepath: string) = 
+    let input = filepath |> File.ReadAllLines
+    let strings = input.[0].Split(",")
+    strings
+
 let calculateHashedValue (input: string) : int =
     let asciiCodes = input |> Seq.map int |> Seq.toList
     let mutable currentValue = 0
@@ -10,6 +16,9 @@ let calculateHashedValue (input: string) : int =
         currentValue <- currentValue % 256
 
     currentValue
+
+let sumAllHashValuesOfStrings (initializationSequence: list<string>) = 
+    initializationSequence |> List.map calculateHashedValue |> List.sum
 
 
 let fileIsGivenAndExists (arguments: String array) (filepath: string) = 
@@ -28,9 +37,9 @@ let main (argv: String array) =
         if filepath |> fileIsGivenAndExists argv then 
             printfn "Processing %s" filepath
 
-            printfn "Hash test: %i" ("HASH" |> calculateHashedValue)
+            let input = filepath |> buildStringsFromInput |> Array.toList
 
-            let part1 = -1
+            let part1 = input |> sumAllHashValuesOfStrings
             let part2 = -1
             
             printfn "Part 1: %i" part1
