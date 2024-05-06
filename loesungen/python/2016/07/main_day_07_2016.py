@@ -1,8 +1,8 @@
-from framework.input_processing import InputReader
+from loesungen.python.utils.input_processing import InputReader
 from structure_day_07_2016 import IPAdress
 from structure_day_07_2016 import TLSCounter, SSLCounter
 
-filename = r"..\..\input_data\input_day_07_2016.txt"
+filename = r"..\..\..\..\input_data/2016/2016_07.txt"
 
 
 def main():

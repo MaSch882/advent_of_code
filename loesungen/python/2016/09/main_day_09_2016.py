@@ -1,7 +1,7 @@
-from framework.input_processing import InputReader
+from loesungen.python.utils.input_processing import InputReader
 from structure_day_09_2016 import SimpleFormatDecompressor, DecompressedLengthCalculator
 
-filename = r"..\..\input_data\input_day_09_2016.txt"
+filename = r"..\..\..\..\input_data/2016/2016_09.txt"
 
 
 def main():

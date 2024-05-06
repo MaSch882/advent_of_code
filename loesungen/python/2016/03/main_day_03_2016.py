@@ -1,8 +1,8 @@
-from framework.input_processing import InputReader
+from loesungen.python.utils.input_processing import InputReader
 from structure_day_03_2016 import Triangle
 from structure_day_03_2016 import TriangleCounter
 
-filename = r"..\..\input_data\input_day_03_2016.txt"
+filename = r"..\..\..\..\input_data/2016/2016_03.txt"
 
 
 def main():
