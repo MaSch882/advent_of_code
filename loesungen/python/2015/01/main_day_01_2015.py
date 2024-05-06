@@ -1,4 +1,4 @@
-from _alt.framework.input_processing import InputReader
+from loesungen.python.utils.input_processing import InputReader
 from structure_day_01_2015 import FloorCalculator
 
 filename = r"..\..\..\..\input_data/2015/2015_01.txt"

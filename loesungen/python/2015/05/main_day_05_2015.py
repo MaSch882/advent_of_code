@@ -1,13 +1,13 @@
-from framework.input_processing import InputReader
+from loesungen.python.utils.input_processing import InputReader
 from structure_day_05_2015 import FirstNiceWordCounter, SecondNiceWordCounter
 
-filename = r"..\..\input_data/input_day_05_2015.txt"
+filename = r"..\..\..\..\input_data/2015/2015_05.txt"
 
 
 def main():
     list_of_words = InputReader.read_input(filename)
 
-    print_solution_part_1(list_of_words)
+    print_solution_part_1(list_of_words)  # 238
     print_solution_part_2(list_of_words)
 
 
