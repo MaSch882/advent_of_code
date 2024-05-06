@@ -1,4 +1,4 @@
-import framework.input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 
 def calculate_maximum_calories_in_list(filename: str) -> int:
@@ -44,11 +44,13 @@ def sum_three_highest_calories(list_of_sorted_integers: list[int]) -> int:
 def main():
     print("Solutions to problem 1: [https://adventofcode.com/2022/day/1]")
 
-    max_calories = calculate_maximum_calories_in_list("../input_data/01_12_problem_data.txt")
-    print(f'The elf with the maximum amount of calories carries {max_calories} calories.')
+    filename = r"..\..\..\..\input_data/2022/2022_01.txt"
 
-    max_three_calories = calculate_sum_of_three_highest_calories("../input_data/01_12_problem_data.txt")
-    print(f'The three elves carrying the most calories carry {max_three_calories} in total.')
+    max_calories = calculate_maximum_calories_in_list(filename)
+    print(f'The elf with the maximum amount of calories carries {max_calories} calories.')  # 69795
+
+    max_three_calories = calculate_sum_of_three_highest_calories(filename)
+    print(f'The three elves carrying the most calories carry {max_three_calories} in total.')  # 208437
 
     print("")
 
