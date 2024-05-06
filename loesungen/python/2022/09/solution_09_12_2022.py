@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from framework import input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 
 def preprocess_input(filename: str) -> list[str]:
@@ -219,10 +219,9 @@ def count_visited_tail_positions(filename: str):
 def main():
     print("Solutions to problem 9: [https://adventofcode.com/2022/day/9]")
 
-    filename_test = "../input_data/09_12_test_data.txt"
-    filename_problem = "../input_data/09_12_problem_data.txt"
+    filename = r"..\..\..\..\input_data/2022/2022_09.txt"
 
-    number_of_visited_tail_positions = count_visited_tail_positions(filename_problem)
+    number_of_visited_tail_positions = count_visited_tail_positions(filename)
 
     print(f'The number of positions visited by the tail is {number_of_visited_tail_positions}.')
 

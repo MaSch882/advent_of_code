@@ -1,4 +1,4 @@
-from framework import input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 
 def read_input(filename: str) -> list[str]:
@@ -183,8 +183,7 @@ def calculate_max_scenic_score(scenic_score: list[int]) -> int:
 def main():
     print("Solutions to problem 8: [https://adventofcode.com/2022/day/8]")
 
-    filename_test = "../input_data/08_12_test_data.txt"
-    filename_problem = "../input_data/08_12_problem_data.txt"
+    filename_problem = r"..\..\..\..\input_data/2022/2022_08.txt"
 
     tree_input = read_input(filename_problem)
     tree_matrix = convert_list_of_strings_in_matrix(tree_input)

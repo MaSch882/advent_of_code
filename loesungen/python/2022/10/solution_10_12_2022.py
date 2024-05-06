@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from framework import input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 INTERESTING_CYLCE_NUMBERS = [20, 60, 100, 140, 180, 220]
 
@@ -67,10 +67,9 @@ def render_crt_image(state: State):
 def main():
     print("Solutions to problem 10: [https://adventofcode.com/2022/day/10]")
 
-    filename_test = "../input_data/10_12_test_data.txt"
-    filename_problem = "../input_data/10_12_problem_data.txt"
+    filename = r"..\..\..\..\input_data/2022/2022_10.txt"
 
-    list_of_commands = ip.read_input(filename_problem)
+    list_of_commands = ip.read_input(filename)
     state = State(cycle=0, register_value=1, signal_strength=0, crt_position=0, crt_output="")
 
     process_list_of_commands(state, list_of_commands)
