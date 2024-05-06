@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import framework.input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 POINTS_FOR_LOSE = 0
 POINTS_FOR_DEUCE = 3
@@ -157,12 +157,14 @@ def calculate_points_for_given_input_data_according_strategy(filename: str) -> i
 def main():
     print("Solutions to problem 2: [https://adventofcode.com/2022/day/2]")
 
-    total_points = calculate_points_for_given_input_data('../input_data/02_12_problem_data.txt')
-    print(f'If we follow the given strategy guide we will score {total_points} points.')
+    filename = r"..\..\..\..\input_data/2022/2022_02.txt"
+
+    total_points = calculate_points_for_given_input_data(filename)
+    print(f'If we follow the given strategy guide we will score {total_points} points.')  # 12586
 
     total_points_strategy = calculate_points_for_given_input_data_according_strategy(
-        '../input_data/02_12_problem_data.txt')
-    print(f'If we follow the top secret strategy guide we will score {total_points_strategy} points.')
+        filename)
+    print(f'If we follow the top secret strategy guide we will score {total_points_strategy} points.')  # 13193
 
     print("")
 

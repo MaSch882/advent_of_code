@@ -1,4 +1,4 @@
-import framework.input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 PRIORITIES = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10, "k": 11, "l": 12,
               "m": 13, "n": 14, "o": 15, "p": 16, "q": 17, "r": 18, "s": 19, "t": 20, "u": 21, "v": 22, "w": 23,
@@ -122,12 +122,14 @@ def calculate_sum_of_priorities_of_all_badges_from_input_data(filename: str) -> 
 def main():
     print("Solutions to problem 3: [https://adventofcode.com/2022/day/3]")
 
+    filename = r"..\..\..\..\input_data/2022/2022_03.txt"
+
     sum_of_priorities = calculate_priorities_of_all_duplicated_characters_of_given_input(
-        "../input_data/03_12_problem_data.txt")
-    print(f'The sum of the priorities of the duplicated items is {sum_of_priorities}.')
+        filename)
+    print(f'The sum of the priorities of the duplicated items is {sum_of_priorities}.')  # 7763
     sum_of_priorities_of_badges = calculate_sum_of_priorities_of_all_badges_from_input_data(
-        "../input_data/03_12_problem_data.txt")
-    print(f'The sum of the priorities of all badges is {sum_of_priorities_of_badges}.')
+        filename)
+    print(f'The sum of the priorities of all badges is {sum_of_priorities_of_badges}.')  # 2569
 
     print("")
 

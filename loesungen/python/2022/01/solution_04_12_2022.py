@@ -1,4 +1,4 @@
-from framework import input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 
 def read_input(filename: str) -> list[str]:
@@ -104,12 +104,15 @@ def count_pairs_of_jobs_overlapping_from_input_data(filename: str) -> int:
 def main():
     print("Solutions to problem 4: [https://adventofcode.com/2022/day/4]")
 
-    pairs_of_jobs_containing_each_other = count_pairs_of_jobs_contained_in_each_other_from_input_data(
-        "../input_data/04_12_problem_data.txt")
-    print(f'The number of jobs where one job is contained in the other is {pairs_of_jobs_containing_each_other}.')
+    filename = r"..\..\..\..\input_data/2022/2022_04.txt"
 
-    pairs_of_jobs_overlapping = count_pairs_of_jobs_overlapping_from_input_data("../input_data/04_12_problem_data.txt")
-    print(f'The number of jobs where the jobs are overlapping is {pairs_of_jobs_overlapping}.')
+    pairs_of_jobs_containing_each_other = count_pairs_of_jobs_contained_in_each_other_from_input_data(
+        filename)
+    print(
+        f'The number of jobs where one job is contained in the other is {pairs_of_jobs_containing_each_other}.')  # 534
+
+    pairs_of_jobs_overlapping = count_pairs_of_jobs_overlapping_from_input_data(filename)
+    print(f'The number of jobs where the jobs are overlapping is {pairs_of_jobs_overlapping}.')  # 841
 
     print("")
 
