@@ -1,4 +1,4 @@
-from framework import input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 
 def read_input(filename: str) -> list[str]:
@@ -125,13 +125,15 @@ def revert_changes_on_stacks() -> None:
 def main():
     print("Solutions to problem 5: [https://adventofcode.com/2022/day/5]")
 
-    message = perform_all_crane_instructions_and_calculate_message("../input_data/05_12_problem_data.txt")
+    filename = r"..\..\..\..\input_data/2022/2022_05.txt"
+
+    message = perform_all_crane_instructions_and_calculate_message(filename)
     print(f'The message delivered after all crane instructions are performed is {message}.')
 
     revert_changes_on_stacks()
 
     message_with_new_crane = perform_all_crane_instructions_together_and_calculate_message(
-        "../input_data/05_12_problem_data.txt")
+        filename)
     print(
         f'The message delivered after all crane instructions are performed on the new model is {message_with_new_crane}.')
 

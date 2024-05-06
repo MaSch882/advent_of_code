@@ -1,4 +1,4 @@
-import framework.input_processing as ip
+from loesungen.python.utils.input_processing import InputReader as ip
 
 
 def read_input(filename: str) -> str:
@@ -32,7 +32,8 @@ def is_start_of_packet(input_characters: list[str]) -> bool:
 def main():
     print("Solutions to problem 6: [https://adventofcode.com/2022/day/6]")
 
-    input_stream = read_input("../input_data/06_12_problem_data.txt")
+    filename = r"..\..\..\..\input_data/2022/2022_06.txt"
+    input_stream = read_input(filename)
 
     START_OF_PACKET = 4
     MESSAGE = 14
