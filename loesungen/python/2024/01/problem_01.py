@@ -1,7 +1,10 @@
-filename = "H:/git_repos/advent_of_code/2024/01_real.txt"
-filename_test = "H:/git_repos/advent_of_code/2024/01_test.txt"
 from loesungen.python.utils import input_processing as ip
 
+filename = "H:/git_repos/advent_of_code/2024/01_real.txt"
+filename_test = "H:/git_repos/advent_of_code/2024/01_test.txt"
+
+
+# INPUT
 
 def read_input() -> list[str]:
     input_reader = ip.InputReader()
@@ -23,6 +26,8 @@ def build_lists(raw_input: list[str]) -> list[list[int]]:
     return [list1, list2]
 
 
+# PART 1
+
 def sort_lists(input_lists: list[list[int]]) -> list[list[int]]:
     input_lists[0].sort()
     input_lists[1].sort()
@@ -32,10 +37,13 @@ def sort_lists(input_lists: list[list[int]]) -> list[list[int]]:
 def calculate_total_distance(sorted_lists: list[list[int]]) -> int:
     total_distance = 0
 
+    left_list = sorted_lists[0]
+    right_list = sorted_lists[1]
+
     for i, _ in enumerate(sorted_lists[0]):
-        a = sorted_lists[0][i]
-        b = sorted_lists[1][i]
-        total_distance += abs(a - b)
+        number_left = left_list[i]
+        number_right = right_list[i]
+        total_distance += abs(number_left - number_right)
 
     return total_distance
 
@@ -47,15 +55,17 @@ def solve_part_1() -> int:
     return calculate_total_distance(sorted_lists)
 
 
+# PART 2
+
 def calculate_similarity(input_lists: list[list[int]]):
     similarity = 0
 
     left_list = input_lists[0]
     right_list = input_lists[1]
 
-    for entry_left in left_list:
-        number_of_matches = right_list.count(entry_left)
-        similarity += entry_left * number_of_matches
+    for number in left_list:
+        number_of_matches = right_list.count(number)
+        similarity += number * number_of_matches
 
     return similarity
 
