@@ -1,0 +1,63 @@
+filename = "H:/git_repos/advent_of_code/2024/01_real.txt"
+filename_test = "H:/git_repos/advent_of_code/2024/01_test.txt"
+from loesungen.python.utils import input_processing as ip
+
+
+def read_input() -> list[str]:
+    input_reader = ip.InputReader()
+    return input_reader.read_input(filename_test)
+
+
+def build_lists(raw_input: list[str]) -> list[list[int]]:
+    if not raw_input:
+        return [[], []]
+
+    list1 = []
+    list2 = []
+
+    for entry in raw_input:
+        entries = entry.split(" ")
+        list1.append(int(entries[0].strip()))
+        list2.append(int(entries[-1].strip()))
+
+    return [list1, list2]
+
+
+def sort_lists(input_lists: list[list[int]]) -> list[list[int]]:
+    input_lists[0].sort()
+    input_lists[1].sort()
+    return [input_lists[0], input_lists[1]]
+
+
+def calculate_total_distance(sorted_lists: list[list[int]]) -> int:
+    total_distance = 0
+
+    for i, _ in enumerate(sorted_lists[0]):
+        a = sorted_lists[0][i]
+        b = sorted_lists[1][i]
+        total_distance += abs(a - b)
+
+    return total_distance
+
+
+def solve_part_1() -> int:
+    raw_data = read_input()
+    input_lists = build_lists(raw_data)
+    sorted_lists = sort_lists(input_lists)
+    return calculate_total_distance(sorted_lists)
+
+
+def solve_part_2() -> int:
+    pass
+
+
+def main():
+    solution_part_1 = solve_part_1()
+    print(f"Part 1: Total distance is {solution_part_1}.")
+
+    solution_part_2 = solve_part_2()
+    print(f"Part 1: Total distance is {solution_part_2}.")
+
+
+if __name__ == "__main__":
+    main()
