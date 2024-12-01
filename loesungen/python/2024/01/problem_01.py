@@ -5,7 +5,7 @@ from loesungen.python.utils import input_processing as ip
 
 def read_input() -> list[str]:
     input_reader = ip.InputReader()
-    return input_reader.read_input(filename_test)
+    return input_reader.read_input(filename)
 
 
 def build_lists(raw_input: list[str]) -> list[list[int]]:
@@ -47,8 +47,23 @@ def solve_part_1() -> int:
     return calculate_total_distance(sorted_lists)
 
 
+def calculate_similarity(input_lists: list[list[int]]):
+    similarity = 0
+
+    left_list = input_lists[0]
+    right_list = input_lists[1]
+
+    for entry_left in left_list:
+        number_of_matches = right_list.count(entry_left)
+        similarity += entry_left * number_of_matches
+
+    return similarity
+
+
 def solve_part_2() -> int:
-    pass
+    raw_data = read_input()
+    input_lists = build_lists(raw_data)
+    return calculate_similarity(input_lists)
 
 
 def main():
