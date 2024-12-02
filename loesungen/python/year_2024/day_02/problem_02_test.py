@@ -6,6 +6,8 @@ from advent_of_code.loesungen.python.year_2024.day_02.problem_02 import is_incre
 from advent_of_code.loesungen.python.year_2024.day_02.problem_02 import is_decreasing
 from advent_of_code.loesungen.python.year_2024.day_02.problem_02 import has_correct_difference
 from advent_of_code.loesungen.python.year_2024.day_02.problem_02 import solve_part_1
+from advent_of_code.loesungen.python.year_2024.day_02.problem_02 import solve_part_2
+from advent_of_code.loesungen.python.year_2024.day_02.problem_02 import is_safe_dampened
 
 
 class TestBuildLists(unittest.TestCase):
@@ -125,4 +127,40 @@ class TestSolvePart1(unittest.TestCase):
     def test_testInput(self):
         actual = solve_part_1([[7,6,4,2,1],[1,2,7,8,9],[9,7,6,2,1],[1,3,2,4,5],[8,6,4,4,1],[1,3,6,7,9]])
         expected = 2
+        self.assertEqual(expected, actual)
+
+class TestIsSafeDampenend(unittest.TestCase):
+    def test_inputDate1(self):
+        actual = is_safe_dampened([7,6,4,2,1])
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def test_inputDate2(self):
+        actual = is_safe_dampened([1,2,7,8,9])
+        expected = False
+        self.assertEqual(expected, actual)
+
+    def test_inputDate3(self):
+        actual = is_safe_dampened([9,7,6,2,1])
+        expected = False
+        self.assertEqual(expected, actual)
+
+    def test_inputDate4(self):
+        actual = is_safe_dampened([1,3,2,4,5])
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def test_inputDate5(self):
+        actual = is_safe_dampened([8,6,4,4,1])
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def test_inputDate6(self):
+        actual = is_safe_dampened([1,3,6,7,9])
+        expected = True
+        self.assertEqual(expected, actual)
+class TestSolvePart2(unittest.TestCase):
+    def test_testInput(self):
+        actual = solve_part_2([[7,6,4,2,1],[1,2,7,8,9],[9,7,6,2,1],[1,3,2,4,5],[8,6,4,4,1],[1,3,6,7,9]])
+        expected = 4
         self.assertEqual(expected, actual)

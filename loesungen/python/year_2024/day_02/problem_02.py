@@ -20,7 +20,7 @@ def build_lists(raw_data: list[str]) -> list[list[int]]:
 
 # PART 1
 
-def is_increasing(report: list[int]):
+def is_increasing(report: list[int]) -> bool:
     indicator = True
 
     for i in range(0, len(report) - 1):
@@ -31,7 +31,7 @@ def is_increasing(report: list[int]):
     return indicator
 
 
-def is_decreasing(report: list[int]):
+def is_decreasing(report: list[int]) -> bool:
     indicator = True
 
     for i in range(0, len(report) - 1):
@@ -42,7 +42,7 @@ def is_decreasing(report: list[int]):
     return indicator
 
 
-def has_correct_difference(report: list[int]):
+def has_correct_difference(report: list[int]) -> bool:
     indicator = True
 
     for i in range(0, len(report) - 1):
@@ -53,7 +53,7 @@ def has_correct_difference(report: list[int]):
     return indicator
 
 
-def is_safe(report: list[int]):
+def is_safe(report: list[int]) -> bool:
     all_increasing: bool = is_increasing(report)
     all_decreasing: bool = is_decreasing(report)
     correct_difference: bool = has_correct_difference(report)
@@ -71,8 +71,29 @@ def solve_part_1(reports: list[list[int]]) -> int:
 
 # PART 2
 
-def solve_part_2():
-    pass
+def is_safe_dampened(report: list[int]) -> bool:
+    indicator = False
+    original_report = report.copy()
+
+    if is_safe(original_report):
+        return True
+
+    for i in range(0, len(report)):
+        copied = report.copy()
+        copied.pop(i)
+        if is_safe(copied):
+            indicator = True
+            break
+
+    return indicator
+
+
+def solve_part_2(reports: list[list[int]]) -> int:
+    safe_dampened_reports = 0
+    for report in reports:
+        if is_safe_dampened(report):
+            safe_dampened_reports += 1
+    return safe_dampened_reports
 
 
 def main():
@@ -81,8 +102,8 @@ def main():
     solution_part_1 = solve_part_1(reports)
     print(f"Part 1: Number of safe reports is {solution_part_1}.")
 
-    # solution_part_2 = solve_part_2()
-    # print(f"Part 1: Total distance is {solution_part_2}.")
+    solution_part_2 = solve_part_2(reports)
+    print(f"Part 1: Number of safe reports using dampener is {solution_part_2}.")
 
 
 if __name__ == "__main__":
