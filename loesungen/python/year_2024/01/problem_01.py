@@ -1,7 +1,7 @@
-from loesungen.python.utils import input_processing as ip
+from advent_of_code.loesungen.python.utils import input_processing as ip
 
-filename = "H:/git_repos/advent_of_code/2024/01_real.txt"
-filename_test = "H:/git_repos/advent_of_code/2024/01_test.txt"
+filename = "H:/git_repos/advent_of_code/year_2024/01_real.txt"
+filename_test = "H:/git_repos/advent_of_code/year_2024/01_test.txt"
 
 
 # INPUT
