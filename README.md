@@ -7,3 +7,6 @@ My solution to the Advent of Code.
 2023: I attempted all puzzles in F# to learn the language, but it wasn't my thing.
 
 2024: I tackle all puzzles in Python and try TDD.
+
+# Lessons Learned
+- Day 3: Broke the TDD-cycle and tried to implement a regex directly. Bad idea! :)
