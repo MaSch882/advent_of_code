@@ -1,6 +1,7 @@
 import unittest
 
-from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import read_input, count_all_vertical_occurences
+from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import read_input, count_all_vertical_occurences, \
+    solve_part_2
 from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import count_all_occurences
 from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import count_all_horizontal_occurences
 from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import count_all_diagonal_downwards_occurences
@@ -8,16 +9,23 @@ from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import count_al
 from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import count_all_occurences
 from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import solve_part_1
 
+from advent_of_code.loesungen.python.year_2024.day_04.problem_04 import is_cross
+
 
 test_lattice_1 = read_input("C:/_Python/advent_of_code/advent_of_code/input/2024_04_test_1.txt")
 test_lattice_2 = read_input("C:/_Python/advent_of_code/advent_of_code/input/2024_04_test_2.txt")
+test_lattice_3 = read_input("C:/_Python/advent_of_code/advent_of_code/input/2024_04_test_3.txt")
 
+
+# INPUT
 
 class TestReadInput(unittest.TestCase):
     def test_readTestInput(self):
         actual = test_lattice_1
         expected = ["..X...", ".SAMX.", ".A..A.", "XMAS.S", ".X...."]
         self.assertEqual(actual, expected)
+
+# PART 1
 
 class TestFindAllHorizontalOccurences(unittest.TestCase):
     def test_emptyLattice(self):
@@ -164,4 +172,46 @@ class TestEdgeCases(unittest.TestCase):
     def test_overlap(self):
         actual = solve_part_1(["XMASAMX"], "XMAS")
         expected = 2
+        self.assertEqual(expected, actual)
+
+# PART 2
+
+class TestPermutationsOfXmas(unittest.TestCase):
+    def test_MasMas(self):
+        actual = is_cross(["MXS", "XAX", "MXS"], 0, 0)
+        self.assertTrue(actual)
+
+    def test_MasSam(self):
+        actual = is_cross(["MXM", "XAX", "SXS"], 0, 0)
+        self.assertTrue(actual)
+
+    def test_SamMas(self):
+        actual = is_cross(["SXS", "XAX", "MXM"], 0, 0)
+        self.assertTrue(actual)
+
+    def test_SamSam(self):
+        actual = is_cross(["SXS", "XAX", "MXM"], 0, 0)
+        self.assertTrue(actual)
+
+class TestTestLattice(unittest.TestCase):
+    def test_MasMas(self):
+        actual = is_cross(["MXS", "XAX", "MXS"], 0, 0)
+        self.assertTrue(actual)
+
+    def test_MasSam(self):
+        actual = is_cross(["MXM", "XAX", "SXS"], 0, 0)
+        self.assertTrue(actual)
+
+    def test_SamMas(self):
+        actual = is_cross(["SXS", "XAX", "MXM"], 0, 0)
+        self.assertTrue(actual)
+
+    def test_SamSam(self):
+        actual = is_cross(["SXS", "XAX", "MXM"], 0, 0)
+        self.assertTrue(actual)
+
+class TestTestLattice3(unittest.TestCase):
+    def test_testLattice3_solvePart2(self):
+        actual = solve_part_2(test_lattice_2)
+        expected = 9
         self.assertEqual(expected, actual)

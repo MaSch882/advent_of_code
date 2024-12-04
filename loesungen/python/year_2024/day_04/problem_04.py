@@ -126,9 +126,30 @@ def count_all_diagonal_upwards_occurences(lattice: list[str], word_to_search: st
     return diagonal_upwards_occurences
 
 # PART 2
+def is_cross(lattice: list[str], row_number: int, column_number: int) -> bool:
+    valid_words = ["MAS", "SAM"]
 
-def solve_part_2(lattice):
-    pass
+    main_diagonal = ""
+    non_diagonal = ""
+
+    for i in range(3):
+        try:
+            main_diagonal += lattice[row_number + i][column_number + i]
+            non_diagonal += lattice[row_number + 2 - i][column_number + i]
+        except IndexError:
+            break
+
+    return main_diagonal in valid_words and non_diagonal in valid_words
+
+def solve_part_2(lattice: list[str]) -> int:
+    number_of_crosses = 0
+
+    for row_number in range(len(lattice)):
+        for column_number in range(len(lattice[0])):
+            if is_cross(lattice, row_number, column_number):
+                number_of_crosses += 1
+
+    return number_of_crosses
 
 
 def main():
@@ -138,8 +159,8 @@ def main():
     solution_part_1 = solve_part_1(lattice, "XMAS")
     print(f"Part 1: There is {solution_part_1} times the word XMAS.")
 
-    # solution_part_2 = solve_part_2(lattice)
-    # print(f"Part 2: Sum of all valid multiplications is {solution_part_2}.")
+    solution_part_2 = solve_part_2(lattice)
+    print(f"Part 2: There are {solution_part_2} X-MAS-crosses.")
 
 if __name__ == "__main__":
     main()
