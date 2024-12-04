@@ -207,7 +207,7 @@ class TestTestLattice(unittest.TestCase):
         self.assertTrue(actual)
 
     def test_SamSam(self):
-        actual = is_cross(["SXS", "XAX", "MXM"], 0, 0)
+        actual = is_cross(["SXM", "XAX", "SXM"], 0, 0)
         self.assertTrue(actual)
 
 class TestTestLattice3(unittest.TestCase):

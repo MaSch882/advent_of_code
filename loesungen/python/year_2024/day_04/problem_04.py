@@ -81,17 +81,23 @@ def count_all_diagonal_downwards_occurences(lattice: list[str], word_to_search: 
     for row_number in range(number_of_rows):
         # ...and for each column...
         for column_number in range(number_of_columns):
-            word_found = ""
-            # ...exactly so far as we have length.
-            for offset in range(word_length):
-                try:
-                    word_found += lattice[row_number + offset][column_number + offset]
-                except IndexError:
-                    break
+            word_found = extract_next_word_diagonal_downwards(lattice, row_number, column_number, word_length)
             if word_found == word_to_search:
                 diagonal_downwards_occurences += 1
 
     return diagonal_downwards_occurences
+
+
+def extract_next_word_diagonal_downwards(lattice, row_number, column_number, word_length):
+    word_found = ""
+    # ...exactly so far as we have length.
+    for offset in range(word_length):
+        try:
+            word_found += lattice[row_number + offset][column_number + offset]
+        except IndexError:
+            break
+    return word_found
+
 
 def count_all_diagonal_upwards_occurences(lattice: list[str], word_to_search: str) -> int:
     if not lattice:
@@ -99,10 +105,7 @@ def count_all_diagonal_upwards_occurences(lattice: list[str], word_to_search: st
 
     number_of_rows = len(lattice)
     number_of_columns = len(lattice[0])
-
     word_length = len(word_to_search)
-    if word_length > number_of_rows:
-        return 0
 
     diagonal_upwards_occurences = 0
 
@@ -110,20 +113,26 @@ def count_all_diagonal_upwards_occurences(lattice: list[str], word_to_search: st
     for row_number in range(number_of_rows):
         # ...and for each column...
         for column_number in range(number_of_columns):
-            word_found = ""
-            # ...exactly so far as we have length.
-            for offset in range(word_length):
-                try:
-                    # If index gets negative, we don't want to continue!
-                    if row_number - offset < 0:
-                        break
-                    word_found += lattice[row_number - offset][column_number + offset]
-                except IndexError:
-                    break
+            # ...exactly so far as word_length dictates.
+            word_found = extract_next_word_diagonal_upwards(lattice, row_number, column_number, word_length)
             if word_found == word_to_search:
                 diagonal_upwards_occurences += 1
 
     return diagonal_upwards_occurences
+
+
+def extract_next_word_diagonal_upwards(lattice, row_number, column_number, word_length):
+    word_found = ""
+    for offset in range(word_length):
+        try:
+            # If index gets negative, we don't want to continue!
+            if row_number - offset < 0:
+                break
+            word_found += lattice[row_number - offset][column_number + offset]
+        except IndexError:
+            break
+    return word_found
+
 
 # PART 2
 def is_cross(lattice: list[str], row_number: int, column_number: int) -> bool:
