@@ -16,7 +16,7 @@ class CalibrationEquation:
     def __eq__(self, other) -> bool:
         return self.target_value == other.target_value and self.operands == other.operands
 
-    def is_solvable(self, operands: list[int]) -> bool:
+    def is_solvable_using_addition_and_multiplication(self, operands: list[int]) -> bool:
         # error case
         if len(operands) < 2:
             raise RecursionError("List of operands became too short.")
@@ -36,4 +36,33 @@ class CalibrationEquation:
             list_with_addition.append(operands[i])
             list_with_multiplication.append(operands[i])
 
-        return self.is_solvable(list_with_addition) or self.is_solvable(list_with_multiplication)
+        return self.is_solvable_using_addition_and_multiplication(
+            list_with_addition) or self.is_solvable_using_addition_and_multiplication(list_with_multiplication)
+
+    def is_solvable_using_addition_multiplication_and_concatenation(self, operands: list[int]) -> bool:
+        # error case
+        if len(operands) < 2:
+            raise RecursionError("List of operands became too short.")
+
+        # basecase
+        if len(operands) == 2:
+            first = operands[0]
+            second = operands[1]
+            concatenation = int(str(first) + str(second))
+            return first + second == self.target_value or first * second == self.target_value or concatenation == self.target_value
+
+        # recursion
+        first = operands[0]
+        second = operands[1]
+        list_with_addition = [first + second]
+        list_with_multiplication = [first * second]
+        list_with_concatenation = [int(str(first) + str(second))]
+        for i in range(2, len(operands)):
+            list_with_addition.append(operands[i])
+            list_with_multiplication.append(operands[i])
+            list_with_concatenation.append(operands[i])
+
+        return self.is_solvable_using_addition_multiplication_and_concatenation(
+            list_with_addition) or self.is_solvable_using_addition_multiplication_and_concatenation(
+            list_with_multiplication) or self.is_solvable_using_addition_multiplication_and_concatenation(
+            list_with_concatenation)
