@@ -8,5 +8,7 @@ My solution to the Advent of Code.
 
 2024: I tackle all puzzles in Python and try TDD.
 
+2025: Stay fluent in Java.
+
 # Lessons Learned
 - Day 3: Broke the TDD-cycle and tried to implement a regex directly. Bad idea! :)
