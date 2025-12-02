@@ -13,7 +13,7 @@ public class Main {
         List<String> lines = reader.readInput(filepath);
         List<Range> ranges = getRanges(lines);
 
-        System.out.println("Part 1: ");
+        System.out.println("Part 1: " + calculateSumOfInvalidIds(ranges));
         System.out.println("Part 2: ");
     }
 
@@ -29,5 +29,43 @@ public class Main {
         }
 
         return ranges;
+    }
+
+    private static Long calculateSumOfInvalidIds(List<Range> ranges) {
+        long sum = 0L;
+        for (Range range : ranges) {
+            sum += calculateInvalidIds(range).stream().mapToLong(Long::longValue).sum();
+        }
+        return sum;
+    }
+
+    private static List<Long> calculateInvalidIds(Range range) {
+        List<Long> invalidIds = new ArrayList<>();
+
+        for (long i = range.getLowerBound(); i <= range.getUpperBound(); i++) {
+            if (isInvalidId(i)) {
+                invalidIds.add(i);
+            }
+        }
+
+        return invalidIds;
+    }
+
+    private static boolean isInvalidId(long id) {
+        String idAsString = ((Long) id).toString();
+        int length = idAsString.length();
+        if (length % 2 == 1) {
+            return false;
+        }
+
+        // Ab hier ist die Laenge der Zahl gerade.
+        char[] digits = idAsString.toCharArray();
+        for (int i = 0; i < length / 2; i++) {
+            if (digits[i] != digits[length / 2 + i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
