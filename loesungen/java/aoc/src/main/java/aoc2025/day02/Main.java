@@ -14,8 +14,6 @@ public class Main {
         List<String> lines = reader.readInput(filepath);
         List<Range> ranges = getRanges(lines);
 
-        isInvalidIdMultipleRepetition(1188511885);
-
         System.out.println("Part 1: " + calculateSumOfInvalidIdsOneRepetition(ranges));
         System.out.println("Part 2: " + calculateSumOfInvalidIdsMultipleRepetition(ranges));
     }
@@ -25,9 +23,9 @@ public class Main {
 
         List<Range> ranges = new ArrayList<>();
         for (String id : ids) {
-            String[] splitted_id = id.split("-");
-            long lowerBound = Long.parseLong(splitted_id[0]);
-            long upperBound = Long.parseLong(splitted_id[1]);
+            String[] split_id = id.split("-");
+            long lowerBound = Long.parseLong(split_id[0]);
+            long upperBound = Long.parseLong(split_id[1]);
             ranges.add(new Range(lowerBound, upperBound));
         }
 
