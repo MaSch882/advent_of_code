@@ -12,10 +12,8 @@ public class Main {
         InputReader reader = new InputReader();
         List<String> lines = reader.readInput(filepath);
 
-        List<String> testLines = List.of("987654321111111", "811111111111119", "234234234234278", "818181911112111");
-
-        System.out.println("Part 1: " + calculateTotalOutputJoltage(testLines));
-        System.out.println("Part 2: ");
+        System.out.println("Part 1: " + calculateTotalOutputJoltage(lines));
+        System.out.println("Part 2: " + calculateTotalOutputJoltageMultipleKnots(lines, 12));
     }
 
     private static int calculateTotalOutputJoltage(List<String> lines) {
@@ -54,9 +52,37 @@ public class Main {
             }
         }
 
-        System.out.println("Maximum Joltage: " + maxJoltage);
-
         return maxJoltage;
+    }
+
+    private static long calculateTotalOutputJoltageMultipleKnots(List<String> lines, int usedBatteries) {
+        return lines.stream().mapToLong(line -> calculateMaximumVoltageMultipleKnots(line, usedBatteries)).sum();
+    }
+
+    private static long calculateMaximumVoltageMultipleKnots(String bank, int usedBatteries) {
+        StringBuilder resultString = new StringBuilder();
+
+        char[] digitsAsChars = bank.toCharArray();
+        List<Integer> digits = new ArrayList<>();
+        for (char c : digitsAsChars) {
+            digits.add(Integer.valueOf(String.valueOf(c)));
+        }
+
+        int maxPos = 0;
+        for (int i = 0; i < usedBatteries; i++) {
+            int offset = usedBatteries - i;
+
+            int max = -1;
+            for (int j = maxPos; j < digits.size() - offset + 1; j++) {
+                if (digits.get(j) > max) {
+                    max = digits.get(j);
+                    maxPos = j + 1;
+                }
+            }
+            resultString.append(max);
+        }
+
+        return Long.parseLong(resultString.toString());
     }
 
 
