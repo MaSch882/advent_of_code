@@ -2,7 +2,9 @@ package aoc2025.day04;
 
 import aocUtils.InputReader;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -12,7 +14,7 @@ public class Main {
         List<String> lines = reader.readInput(filepath);
 
         System.out.println("Part 1: " + countAccessiblePaperRolls(lines));
-        System.out.println("Part 2: ");
+        System.out.println("Part 2: " + countAllRemovedPaperRolls(lines));
     }
 
     private static int countAccessiblePaperRolls(List<String> lines) {
@@ -29,6 +31,50 @@ public class Main {
         }
 
         return numberOfAccessiblePaperRolls;
+    }
+
+    private static int countAllRemovedPaperRolls(List<String> lines) {
+        int totalNumberOfRemovedPaperRolls = 0;
+        int removedPaperRollsCurrentIteration = 0;
+        do {
+            Map<Integer, Integer> markedPaperRolls = new HashMap<>();
+
+            markedPaperRolls = markPaperRolls(lines);
+            removePaperRolls(lines, markedPaperRolls);
+
+            removedPaperRollsCurrentIteration = markedPaperRolls.size();
+            totalNumberOfRemovedPaperRolls += removedPaperRollsCurrentIteration;
+        }
+        while (removedPaperRollsCurrentIteration != 0);
+
+        return totalNumberOfRemovedPaperRolls;
+    }
+
+
+    private static Map<Integer, Integer> markPaperRolls(List<String> lines) {
+        Map<Integer, Integer> markedPaperRolls = new HashMap<>();
+
+        for (int row = 0; row < lines.size(); row++) {
+            for (int col = 0; col < lines.getFirst().length(); col++) {
+                if (isAccessiblePaperRoll(lines, row, col)) {
+                    markedPaperRolls.put(row, col);
+                }
+            }
+        }
+
+        return markedPaperRolls;
+    }
+
+    private static void removePaperRolls(List<String> lines, Map<Integer, Integer> markedPaperRolls) {
+        for (Map.Entry<Integer, Integer> markedPaperRoll : markedPaperRolls.entrySet()) {
+            String row = lines.get(markedPaperRoll.getKey());
+
+            StringBuilder builder = new StringBuilder(row);
+            builder.setCharAt(markedPaperRoll.getValue(), '.');
+
+            String replaced = builder.toString();
+            lines.set(markedPaperRoll.getKey(), replaced);
+        }
     }
 
     private static boolean isAccessiblePaperRoll(List<String> lines, int row, int col) {
