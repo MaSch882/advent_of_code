@@ -10,5 +10,4 @@ My solution to the Advent of Code.
 
 2025: Stay fluent in Java.
 
-# Lessons Learned
-- Day 3: Broke the TDD-cycle and tried to implement a regex directly. Bad idea! :)
+2026: Have fun with Python. ;)
